@@ -1,0 +1,44 @@
+/* Portal page */
+
+.main-container {
+    flex-grow: 1;
+    max-width: 6xl;
+    margin: 0 auto;
+    padding: 3rem 1rem; /* 12px and 4px converted to rem */
+  }
+  
+  .page-title {
+    font-size: 2.5rem; /* 4xl */
+    font-weight: bold;
+    margin-bottom: 2rem; /* 8px */
+    color: var(--dark-green);
+    font-family: "Montserrat", serif;
+    text-align: center;
+  }
+  
+  .tab-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem; /* 8px */
+  }
+  
+  .tab-button {
+    margin-right: 1rem; /* 4px */
+    padding: 0.5rem 1.5rem; /* 2px and 6px converted to rem */
+    border-radius: 9999px; /* Full rounded */
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .tab-button:last-child {
+    margin-right: 0;
+  }
+  
+  .tab-button-active {
+    background-color: var(--dark-green);
+    color: white;
+  }
+  
+  .tab-button-inactive {
+    background-color: var(--light-blue);
+    color: var(--dark-green);
+  }

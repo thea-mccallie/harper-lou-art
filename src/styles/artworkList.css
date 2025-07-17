@@ -1,0 +1,65 @@
+  /* Artwork list styles */
+  .artwork-list {
+    padding: 20px;
+  }
+  
+  .artwork-list input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .artwork-list .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  @media (min-width: 640px) {
+    .artwork-list .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .artwork-list .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .artwork-list .artwork-item {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  .artwork-list .artwork-item img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .artwork-list .artwork-item h3 {
+    font-size: 1.25rem;
+    margin-top: 10px;
+  }
+  
+  .artwork-list .artwork-item p {
+    color: #666;
+  }
+  
+  .artwork-list .artwork-item button {
+    margin-top: 10px;
+    background-color: #b22222;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .artwork-list .artwork-item button:hover {
+    background-color: #8b0000;
+  }

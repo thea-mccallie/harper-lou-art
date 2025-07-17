@@ -1,0 +1,72 @@
+  /* bio footer */
+
+  .bio-footer {
+    background-color: var(--light-yellow);
+    padding: 16px;
+    position: relative; /* Fix the footer to the bottom of the viewport */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+  
+     .bio-footer .bio-container {
+      margin: 0 auto; /* Center the container within the footer */
+      max-width: 75%;
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 40px;
+    }
+    
+    .bio-footer .bio-name {
+      font-size: 40px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      color: var(--blue);
+    }
+    
+    .bio-footer .bio-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    
+    .bio-footer .bio-image {
+      border-radius: 50%;
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .bio-footer .bio-details {
+      flex: 1;
+      text-align: left; /* Align text to the left */
+    }
+    
+    .bio-footer .bio-details p {
+      font-size: 1.125rem;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    
+    /* Media query for smaller screens */
+    @media (max-width: 768px) {
+      .bio-footer .bio-content {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+      }
+    
+      .bio-footer .bio-image {
+        width: 200px;
+        height: 200px;
+      }
+    
+      .bio-footer .bio-details h3 {
+        font-size: 1.8rem;
+      }
+    
+      .bio-footer .bio-details p {
+        font-size: 1rem;
+      }
+    }
+  
