@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server"
 import { getArtwork, updateArtwork, deleteArtwork } from "@/lib/db"
 
 export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  request: NextRequest, 
+  { params }: any
 ) {
   try {
-    const { id } = await context.params
+    const { id } = params as { id: string }
     const artwork = await getArtwork(id)
     if (!artwork) {
       return NextResponse.json({ error: "Artwork not found" }, { status: 404 })
@@ -19,11 +19,11 @@ export async function GET(
 }
 
 export async function PUT(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  request: NextRequest, 
+  { params }: any
 ) {
   try {
-    const { id } = await context.params
+    const { id } = params as { id: string }
     const updates = await request.json()
 
     if (!updates || Object.keys(updates).length === 0) {
@@ -46,11 +46,11 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  request: NextRequest, 
+  { params }: any
 ) {
   try {
-    const { id } = await context.params
+    const { id } = params as { id: string }
     await deleteArtwork(id)
     return NextResponse.json({ message: "Artwork deleted successfully" })
   } catch (error) {
