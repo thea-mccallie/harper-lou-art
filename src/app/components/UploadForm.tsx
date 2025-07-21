@@ -238,6 +238,7 @@ const UploadForm = () => {
                     <SelectItem value="drawing">Drawing</SelectItem>
                     <SelectItem value="digital">Digital Art</SelectItem>
                     <SelectItem value="mixed-media">Mixed Media</SelectItem>
+                    <SelectItem value="ceramics">Ceramics</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
