@@ -1,6 +1,14 @@
 "use client"
 import React, { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
+import Link from "next/link"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 interface Artwork {
   id: string
@@ -12,7 +20,6 @@ interface Artwork {
 const ArtworkPage = () => {
   const params = useParams()
   const [artwork, setArtwork] = useState<Artwork | null>(null)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   useEffect(() => {
     const fetchArtwork = async () => {
@@ -31,49 +38,83 @@ const ArtworkPage = () => {
     fetchArtwork()
   }, [params.id])
 
-  const handleNextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % (artwork?.imageUrls.length || 1))
-  }
-
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + (artwork?.imageUrls.length || 1)) % (artwork?.imageUrls.length || 1))
-  }
-
   if (!artwork) {
-    return <div className="text-center mt-10">Loading...</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading artwork...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="max-w-3xl mx-auto mb-24 px-5 text-center">
-      <header>
-        <h1 className="text-4xl font-sans mb-5">Harper Lou Art</h1>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="p-6">
+        <Link 
+          href="/" 
+          className="text-2xl font-sans font-semibold text-gray-900 hover:text-gray-700 transition-colors"
+        >
+          Harper Lou Art
+        </Link>
       </header>
 
-      <h1 className="text-3xl font-sans mb-8">{artwork.title}</h1>
+      {/* Main Content */}
+      <div className="container mx-auto px-6 pb-12">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          {/* Left Column - Title and Description */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-4xl lg:text-5xl font-sans font-light text-gray-900 mb-4 leading-tight">
+                {artwork.title}
+              </h1>
+              <div className="w-12 h-0.5 bg-gray-300"></div>
+            </div>
+            
+            {artwork.description && (
+              <div className="prose prose-gray max-w-none">
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  {artwork.description}
+                </p>
+              </div>
+            )}
+          </div>
 
-      <div className="flex items-center justify-center mb-6 gap-4">
-        <button
-          onClick={handlePrevImage}
-          className="bg-blue-600 hover:bg-blue-800 text-white rounded-md px-4 py-2 transition"
-        >
-          Previous
-        </button>
-
-        <img
-          src={artwork.imageUrls[currentImageIndex]}
-          alt={artwork.title}
-          className="max-w-full h-auto rounded-lg"
-        />
-
-        <button
-          onClick={handleNextImage}
-          className="bg-blue-600 hover:bg-blue-800 text-white rounded-md px-4 py-2 transition"
-        >
-          Next
-        </button>
+          {/* Right Column - Carousel */}
+          <div className="w-full">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {artwork.imageUrls.map((imageUrl, index) => (
+                  <CarouselItem key={index}>
+                    <div className="aspect-square relative overflow-hidden rounded-lg bg-gray-100">
+                      <img
+                        src={imageUrl}
+                        alt={`${artwork.title} - Image ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {artwork.imageUrls.length > 1 && (
+                <>
+                  <CarouselPrevious className="left-4" />
+                  <CarouselNext className="right-4" />
+                </>
+              )}
+            </Carousel>
+            
+            {/* Image Counter */}
+            {artwork.imageUrls.length > 1 && (
+              <div className="text-center mt-4 text-sm text-gray-500">
+                {artwork.imageUrls.length} image{artwork.imageUrls.length > 1 ? 's' : ''}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-
-      <p className="text-base font-sans mt-5">{artwork.description}</p>
     </div>
   )
 }

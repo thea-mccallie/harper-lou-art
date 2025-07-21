@@ -3,10 +3,11 @@ import { getArtwork, updateArtwork, deleteArtwork } from "@/lib/db"
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const artwork = await getArtwork(params.id)
+    const { id } = await context.params
+    const artwork = await getArtwork(id)
     if (!artwork) {
       return NextResponse.json({ error: "Artwork not found" }, { status: 404 })
     }
@@ -19,16 +20,17 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const updates = await request.json()
 
     if (!updates || Object.keys(updates).length === 0) {
       return NextResponse.json({ error: "No updates provided" }, { status: 400 })
     }
 
-    const updatedArtwork = await updateArtwork(params.id, updates)
+    const updatedArtwork = await updateArtwork(id, updates)
     if (!updatedArtwork) {
       return NextResponse.json({ error: "Artwork not found" }, { status: 404 })
     }
@@ -45,10 +47,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    await deleteArtwork(params.id)
+    const { id } = await context.params
+    await deleteArtwork(id)
     return NextResponse.json({ message: "Artwork deleted successfully" })
   } catch (error) {
     console.error("Error deleting artwork:", error)

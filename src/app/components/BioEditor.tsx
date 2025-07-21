@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Upload, Save, Loader2, User, CheckCircle, AlertCircle, Image as ImageIcon } from "lucide-react"
 
 interface BioItem {
   id: string
-  name: string
-  content: string
-  imageUrl: string
+  name: string | null
+  content: string | null
+  imageUrl: string | null
 }
 
 const BioEditor: React.FC = () => {
@@ -46,7 +54,7 @@ const BioEditor: React.FC = () => {
     setSuccess(null)
 
     try {
-      let imageUrl = bio.imageUrl // Keep existing image URL by default
+      let imageUrl = bio.imageUrl || '' // Keep existing image URL by default
 
       // If there's a new image file, upload it to S3 using presigned URL
       if (imageFile) {
@@ -87,8 +95,8 @@ const BioEditor: React.FC = () => {
       // Now send JSON data to API
       const bioData = {
         id: bio.id,
-        name: bio.name,
-        content: bio.content,
+        name: bio.name || '',
+        content: bio.content || '',
         imageUrl: imageUrl
       }
 
@@ -120,36 +128,144 @@ const BioEditor: React.FC = () => {
   }
 
   if (loading) {
-    return <div className="loading">Loading...</div>
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <p className="text-muted-foreground">Loading bio information...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="bio-editor">
-      {error && <div className="error">{error}</div>}
-      {success && <div className="success">{success}</div>}
+    <div className="space-y-6 p-6 max-w-4xl mx-auto">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Bio Editor</h1>
+        <p className="text-muted-foreground">
+          Update your artist bio, profile information, and photo.
+        </p>
+      </div>
+
+      {/* Alert Messages */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
+      {success && (
+        <Alert>
+          <CheckCircle className="h-4 w-4" />
+          <AlertDescription>{success}</AlertDescription>
+        </Alert>
+      )}
+
       {bio && (
-        <>
-          <input
-            type="text"
-            value={bio.name}
-            onChange={(e) => setBio({ ...bio, name: e.target.value })}
-            placeholder="Name"
-            className="bio-input"
-          />
-          <textarea
-            value={bio.content}
-            onChange={(e) => setBio({ ...bio, content: e.target.value })}
-            placeholder="Content"
-            className="bio-textarea"
-          />
-          <input
-            type="file"
-            onChange={(e) => setImageFile(e.target.files ? e.target.files[0] : null)}
-            className="bio-file-input"
-          />
-          {bio.imageUrl && <img src={bio.imageUrl} alt="Bio" className="bio-image" />}
-          <button onClick={handleSave} className="bio-save-button">Save</button>
-        </>
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Profile Image Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <ImageIcon className="w-5 h-5 mr-2" />
+                Profile Photo
+              </CardTitle>
+              <CardDescription>
+                Upload a high-quality photo.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-col items-center space-y-4">
+                <Avatar className="w-32 h-32">
+                  <AvatarImage src={bio.imageUrl || undefined} alt={bio.name || 'Profile'} />
+                  <AvatarFallback className="text-2xl">
+                    {bio.name ? bio.name.charAt(0).toUpperCase() : <User className="w-8 h-8" />}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="w-full">
+                  <Label htmlFor="photo-upload" className="text-sm font-medium">
+                    Upload New Photo
+                  </Label>
+                  <Input
+                    id="photo-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setImageFile(e.target.files ? e.target.files[0] : null)}
+                    className="mt-2"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Recommended: Square image, at least 400x400px
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Bio Information Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <User className="w-5 h-5 mr-2" />
+                Artist Information
+              </CardTitle>
+              <CardDescription>
+                Your name and bio will be displayed on your artist page.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Artist Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={bio.name || ''}
+                  onChange={(e) => setBio({ ...bio, name: e.target.value })}
+                  placeholder="Enter your artist name"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="content">Bio Content</Label>
+                <Textarea
+                  id="content"
+                  value={bio.content || ''}
+                  onChange={(e) => setBio({ ...bio, content: e.target.value })}
+                  placeholder="Tell your story as an artist. Describe your background, artistic journey, inspirations, and what makes your work unique..."
+                  className="min-h-[150px] resize-none"
+                />
+                <p className="text-xs text-muted-foreground">
+                  {(bio.content || '').length}/1000 characters
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Save Button */}
+      {bio && (
+        <div className="flex justify-end">
+          <Button 
+            onClick={handleSave} 
+            disabled={loading}
+            size="lg"
+            className="min-w-[120px]"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Save Changes
+              </>
+            )}
+          </Button>
+        </div>
       )}
     </div>
   )
