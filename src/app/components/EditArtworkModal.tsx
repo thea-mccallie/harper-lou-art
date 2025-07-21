@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { v4 as uuidv4 } from 'uuid'
-import AWS from 'aws-sdk'
 
 interface EditArtworkModalProps {
   isOpen: boolean
@@ -17,12 +15,6 @@ interface EditArtworkModalProps {
   onSubmit: (updatedArtwork: any) => void
   onDelete: (id: string) => void
 }
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID!,
-  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY!,
-  region: process.env.NEXT_PUBLIC_AWS_REGION!,
-})
 
 const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, editingArtwork, onChange, onSubmit, onDelete }) => {
   const [newImageUrl, setNewImageUrl] = useState('')
@@ -56,17 +48,43 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
     e.preventDefault()
 
     const newImageUrls = []
+    
+    // Upload new images using presigned URLs
     for (const image of newImages) {
-      const imageKey = `${uuidv4()}-${image.name}`
-      const uploadParams = {
-        Bucket: process.env.NEXT_PUBLIC_BUCKET_NAME as string,
-        Key: imageKey,
-        Body: image,
-        ContentType: image.type,
+      if (!image) continue; // Skip empty file slots
+      
+      // Step 1: Get presigned URL from backend
+      const urlResponse = await fetch('/api/upload-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileName: image.name,
+          fileType: image.type,
+        }),
+      })
+
+      if (!urlResponse.ok) {
+        throw new Error('Failed to get upload URL')
       }
 
-      const uploadResult = await s3.upload(uploadParams).promise()
-      newImageUrls.push(uploadResult.Location)
+      const { presignedUrl, imageUrl } = await urlResponse.json()
+
+      // Step 2: Upload file directly to S3 using presigned URL
+      const uploadResponse = await fetch(presignedUrl, {
+        method: 'PUT',
+        body: image,
+        headers: {
+          'Content-Type': image.type,
+        },
+      })
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload image')
+      }
+
+      newImageUrls.push(imageUrl)
     }
 
     const updatedArtwork = {

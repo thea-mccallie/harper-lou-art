@@ -1,13 +1,6 @@
 "use client"
 import { useState } from "react"
 import { v4 as uuidv4 } from "uuid"
-import AWS from 'aws-sdk'
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID!,
-  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY!,
-  region: process.env.NEXT_PUBLIC_AWS_REGION!,
-})
 
 const UploadForm = () => {
   const [title, setTitle] = useState("")
@@ -39,7 +32,7 @@ const UploadForm = () => {
     setError("")
     setSuccess("")
 
-    if (images.length === 0) {
+    if (images.filter(img => img).length === 0) {
       setError("At least one image is required")
       setLoading(false)
       return
@@ -48,17 +41,42 @@ const UploadForm = () => {
     try {
       const imageUrls = []
 
+      // Upload each image using presigned URLs
       for (const image of images) {
-        const imageKey = `${uuidv4()}-${image.name}`
-        const uploadParams = {
-          Bucket: process.env.NEXT_PUBLIC_BUCKET_NAME as string,
-          Key: imageKey,
-          Body: image,
-          ContentType: image.type,
+        if (!image) continue; // Skip empty file slots
+        
+        // Step 1: Get presigned URL from backend
+        const urlResponse = await fetch('/api/upload-url', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fileName: image.name,
+            fileType: image.type,
+          }),
+        })
+
+        if (!urlResponse.ok) {
+          throw new Error('Failed to get upload URL')
         }
 
-        const uploadResult = await s3.upload(uploadParams).promise()
-        imageUrls.push(uploadResult.Location)
+        const { presignedUrl, imageUrl } = await urlResponse.json()
+
+        // Step 2: Upload file directly to S3 using presigned URL
+        const uploadResponse = await fetch(presignedUrl, {
+          method: 'PUT',
+          body: image,
+          headers: {
+            'Content-Type': image.type,
+          },
+        })
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload image')
+        }
+
+        imageUrls.push(imageUrl)
       }
 
       // Create artwork object
@@ -90,6 +108,12 @@ const UploadForm = () => {
       setCategory("")
       setImages([])
       setFileInputs([0])
+      
+      // Reset file inputs
+      const fileInputElements = document.querySelectorAll('input[type="file"]')
+      fileInputElements.forEach((input: any) => {
+        input.value = ''
+      })
     } catch (err) {
       console.error("Error uploading artwork:", err)
       setError("Failed to upload artwork")

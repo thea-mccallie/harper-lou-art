@@ -16,12 +16,16 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const bioUpdates = await request.json()
-
-    if (typeof bioUpdates !== "object" || !bioUpdates.text) {
-      return NextResponse.json({ error: "Invalid bio data" }, { status: 400 })
+    const contentType = request.headers.get("content-type") || ""
+    if (contentType.includes("multipart/form-data")) {
+      return NextResponse.json(
+        { error: "File uploads are not supported in app directory API routes. Use pages/api/bio.ts instead." },
+        { status: 400 }
+      )
     }
 
+    // For JSON requests (no file upload)
+    const bioUpdates = await request.json()
     await updateBio(bioUpdates)
     return NextResponse.json({ message: "Bio updated successfully" }, { status: 200 })
   } catch (error) {

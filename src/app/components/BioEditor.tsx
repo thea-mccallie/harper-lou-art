@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { v4 as uuidv4 } from 'uuid'
-import AWS from 'aws-sdk'
 
 interface BioItem {
   id: string
@@ -8,12 +6,6 @@ interface BioItem {
   content: string
   imageUrl: string
 }
-
-const s3 = new AWS.S3({
-  accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID!,
-  secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY!,
-  region: process.env.NEXT_PUBLIC_AWS_REGION!,
-})
 
 const BioEditor: React.FC = () => {
   const [bio, setBio] = useState<BioItem | null>(null)
@@ -45,26 +37,6 @@ const BioEditor: React.FC = () => {
     fetchBio()
   }, [])
 
-  const handleImageUpload = async () => {
-    if (!imageFile) return null
-
-    const imageKey = `${uuidv4()}-${imageFile.name}`
-    const uploadParams = {
-      Bucket: process.env.NEXT_PUBLIC_BUCKET_NAME!,
-      Key: imageKey,
-      Body: imageFile,
-      ContentType: imageFile.type,
-    }
-
-    try {
-      const uploadResult = await s3.upload(uploadParams).promise()
-      return uploadResult.Location
-    } catch (error) {
-      console.error("Error uploading image:", error)
-      setError("Failed to upload image")
-      return null
-    }
-  }
 
   const handleSave = async () => {
     if (!bio) return
@@ -74,11 +46,50 @@ const BioEditor: React.FC = () => {
     setSuccess(null)
 
     try {
-      const imageUrl = imageFile ? await handleImageUpload() : bio.imageUrl
+      let imageUrl = bio.imageUrl // Keep existing image URL by default
 
-      const updatedBio = {
-        ...bio,
-        imageUrl,
+      // If there's a new image file, upload it to S3 using presigned URL
+      if (imageFile) {
+        // Step 1: Get presigned URL from backend
+        const urlResponse = await fetch('/api/upload-url', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fileName: imageFile.name,
+            fileType: imageFile.type,
+          }),
+        })
+
+        if (!urlResponse.ok) {
+          throw new Error('Failed to get upload URL')
+        }
+
+        const { presignedUrl, imageUrl: newImageUrl } = await urlResponse.json()
+
+        // Step 2: Upload file directly to S3 using presigned URL
+        const uploadResponse = await fetch(presignedUrl, {
+          method: 'PUT',
+          body: imageFile,
+          headers: {
+            'Content-Type': imageFile.type,
+          },
+        })
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload image')
+        }
+
+        imageUrl = newImageUrl
+      }
+
+      // Now send JSON data to API
+      const bioData = {
+        id: bio.id,
+        name: bio.name,
+        content: bio.content,
+        imageUrl: imageUrl
       }
 
       const response = await fetch('/api/bio', {
@@ -86,7 +97,7 @@ const BioEditor: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedBio),
+        body: JSON.stringify(bioData),
       })
 
       if (!response.ok) {
@@ -95,6 +106,7 @@ const BioEditor: React.FC = () => {
 
       const data = await response.json()
       setBio(data)
+      setImageFile(null) // Clear the selected file after successful upload
       setSuccess('Bio updated successfully')
     } catch (error) {
       if (error instanceof Error) {
