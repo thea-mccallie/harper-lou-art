@@ -121,7 +121,7 @@ const ArtworkList = () => {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Artwork Management</h1>
         <p className="text-muted-foreground">
-          Manage your artwork collection. Search, edit, and organize your pieces.
+          Manage individual artworks; reorder, delete, and add images; edit titles, categories and descriptions.
         </p>
       </div>
 

@@ -180,7 +180,7 @@ const UploadForm = () => {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Upload Artwork</h1>
         <p className="text-muted-foreground">
-          Upload your artwork with multiple images and detailed information.
+          Upload artwork with 1 - 10 images and a description.
         </p>
       </div>
 
@@ -232,12 +232,8 @@ const UploadForm = () => {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="painting">Painting</SelectItem>
-                    <SelectItem value="sculpture">Sculpture</SelectItem>
-                    <SelectItem value="photography">Photography</SelectItem>
-                    <SelectItem value="drawing">Drawing</SelectItem>
-                    <SelectItem value="digital">Digital Art</SelectItem>
-                    <SelectItem value="mixed-media">Mixed Media</SelectItem>
+                    <SelectItem value="paintings">Painting</SelectItem>
+                    <SelectItem value="prints">Prints</SelectItem>
                     <SelectItem value="ceramics">Ceramics</SelectItem>
                   </SelectContent>
                 </Select>

@@ -265,15 +265,18 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="painting">Painting</SelectItem>
-                  <SelectItem value="sculpture">Sculpture</SelectItem>
-                  <SelectItem value="photography">Photography</SelectItem>
+                  <SelectItem value="ceramics">Ceramics</SelectItem>
+                  <SelectItem value="prints">Prints</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Images Management */}
             <div className="grid gap-4">
-              <Label>Artwork Images</Label>
+              <div>
+                <Label>Artwork Images</Label>
+                <p className="text-sm text-muted-foreground">Drag and drop to reorder</p>
+              </div>
               
               {/* Image Grid */}
               {images.length > 0 && (

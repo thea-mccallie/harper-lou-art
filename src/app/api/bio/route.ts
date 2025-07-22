@@ -27,7 +27,10 @@ export async function PUT(request: NextRequest) {
     // For JSON requests (no file upload)
     const bioUpdates = await request.json()
     await updateBio(bioUpdates)
-    return NextResponse.json({ message: "Bio updated successfully" }, { status: 200 })
+    
+    // Fetch and return the updated bio data
+    const updatedBio = await getBio()
+    return NextResponse.json(updatedBio, { status: 200 })
   } catch (error) {
     console.error("Error updating bio:", error)
     return NextResponse.json({ error: "Failed to update bio" }, { status: 500 })
