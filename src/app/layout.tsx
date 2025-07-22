@@ -1,5 +1,3 @@
-// src/app/layout.tsx
-
 import "@/styles/globals.css"
 import { Providers } from "./providers"
 

@@ -19,33 +19,57 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
-import { X, Plus, Upload, GripVertical } from "lucide-react"
+import { X, Upload, GripVertical } from "lucide-react"
 
+// Interface for managing individual images in the editor
 interface ImageItem {
-  id: string
-  url: string
-  isExisting: boolean
-  file?: File
-  markedForDeletion?: boolean
+  id: string                    // Unique identifier for the image
+  url: string                   // Image URL (S3 URL for existing, blob URL for new)
+  isExisting: boolean           // Whether this is an existing image or newly uploaded
+  file?: File                   // File object for newly selected images
+  markedForDeletion?: boolean   // Whether existing image is marked for deletion
 }
 
+// Props interface for the EditArtworkModal component
 interface EditArtworkModalProps {
-  isOpen: boolean
-  onClose: () => void
-  editingArtwork: {
+  isOpen: boolean               // Controls modal visibility
+  onClose: () => void           // Callback to close the modal
+  editingArtwork: {             // Current artwork data being edited
     id: string
     title: string
     imageUrls: string[]
     category: string
     description: string
   }
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
-  onSubmit: (updatedArtwork: any) => void
-  onDelete: (id: string) => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void  // Form field change handler
+  onSubmit: (updatedArtwork: any) => void   // Callback when form is submitted
+  onDelete: (id: string) => void            // Callback to delete the artwork
 }
 
+/**
+ * EditArtworkModal Component
+ * 
+ * A comprehensive modal for editing artwork details including:
+ * - Basic information (title, description, category)
+ * - Image management (upload, reorder, delete)
+ * - Drag-and-drop functionality for image reordering
+ * - S3 integration for image uploads via presigned URLs
+ * 
+ * Features:
+ * - Multi-image upload with preview
+ * - Drag-and-drop reordering
+ * - Mark existing images for deletion
+ * - Real-time form validation
+ * - Loading states and error handling
+ * - Memory leak prevention with URL cleanup
+ */
+
 const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, editingArtwork, onChange, onSubmit, onDelete }) => {
-  // Initialize images array with existing images
+  
+  /**
+   * Initialize images array from existing artwork imageUrls
+   * Converts string URLs to ImageItem objects for consistent handling
+   */
   const initializeImages = (): ImageItem[] => {
     return editingArtwork.imageUrls.map((url, index) => ({
       id: `existing-${index}`,
@@ -55,23 +79,29 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
     }))
   }
 
-  const [images, setImages] = useState<ImageItem[]>(initializeImages())
-  const [loading, setLoading] = useState(false)
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  // State management
+  const [images, setImages] = useState<ImageItem[]>(initializeImages())     // Current images in editor
+  const [loading, setLoading] = useState(false)                            // Loading state for form submission
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)     // Index of currently dragged image
 
-  // Update images when editingArtwork changes
+  // Reset images when modal opens or editingArtwork changes
   React.useEffect(() => {
     if (isOpen) {
       setImages(initializeImages())
     }
   }, [editingArtwork, isOpen])
 
+  // Early return if modal is closed
   if (!isOpen) return null
 
+  /**
+   * Handle new file selection for image upload
+   * Creates blob URLs for preview and adds to images array
+   */
   const handleFileChange = (files: FileList | null) => {
     if (files && files.length > 0) {
       const newImageItems: ImageItem[] = Array.from(files).map((file, index) => {
-        const objectUrl = URL.createObjectURL(file)
+        const objectUrl = URL.createObjectURL(file)  // Create preview URL
         return {
           id: `new-${Date.now()}-${index}`,
           url: objectUrl,
@@ -84,6 +114,11 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
     }
   }
 
+  /**
+   * Remove an image from the editor
+   * For new images: revokes blob URL to prevent memory leaks
+   * For existing images: handled by toggleDeletion instead
+   */
   const removeImage = (id: string) => {
     setImages(prev => {
       const imageToRemove = prev.find(img => img.id === id)
@@ -95,6 +130,10 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
     })
   }
 
+  /**
+   * Toggle deletion status for existing images
+   * Existing images are marked for deletion rather than immediately removed
+   */
   const toggleDeletion = (id: string) => {
     setImages(prev => prev.map(img => 
       img.id === id 
@@ -103,16 +142,30 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
     ))
   }
 
+  // Drag and Drop Handlers for Image Reordering
+  
+  /**
+   * Handle drag start event
+   * Stores the index of the dragged item
+   */
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index)
     e.dataTransfer.effectAllowed = 'move'
   }
 
+  /**
+   * Handle drag over event
+   * Allows the drop by preventing default behavior
+   */
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
   }
 
+  /**
+   * Handle drop event
+   * Reorders the images array based on drag and drop positions
+   */
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
     e.preventDefault()
     
@@ -131,6 +184,14 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
     setDraggedIndex(null)
   }
 
+  /**
+   * Handle form submission
+   * Process:
+   * 1. Upload new images to S3 via presigned URLs
+   * 2. Build final imageUrls array respecting order and deletions
+   * 3. Submit updated artwork data
+   * 4. Clean up blob URLs to prevent memory leaks
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -138,10 +199,10 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
     try {
       const newImageUrls = []
       
-      // Upload new images using presigned URLs
+      // Step 1: Upload new images using presigned URLs
       for (const imageItem of images) {
         if (!imageItem.isExisting && imageItem.file) {
-          // Step 1: Get presigned URL from backend
+          // Get presigned URL from backend
           const urlResponse = await fetch('/api/upload-url', {
             method: 'POST',
             headers: {
@@ -159,7 +220,7 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
 
           const { presignedUrl, imageUrl } = await urlResponse.json()
 
-          // Step 2: Upload file directly to S3 using presigned URL
+          // Upload file directly to S3 using presigned URL
           const uploadResponse = await fetch(presignedUrl, {
             method: 'PUT',
             body: imageItem.file,
@@ -176,7 +237,7 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
         }
       }
 
-      // Build the final image URLs array in the correct order
+      // Step 2: Build the final image URLs array in the correct order
       const finalImageUrls = []
       for (const imageItem of images) {
         if (imageItem.isExisting && !imageItem.markedForDeletion) {
@@ -193,6 +254,7 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
         }
       }
 
+      // Step 3: Submit updated artwork data
       const updatedArtwork = {
         ...editingArtwork,
         imageUrls: finalImageUrls
@@ -200,7 +262,7 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
       
       await onSubmit(updatedArtwork)
       
-      // Clean up object URLs
+      // Step 4: Clean up object URLs to prevent memory leaks
       images.forEach(img => {
         if (!img.isExisting && img.url.startsWith('blob:')) {
           URL.revokeObjectURL(img.url)
@@ -212,7 +274,7 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
       
     } catch (error) {
       console.error('Error updating artwork:', error)
-      // You might want to add error state handling here
+      // TODO: Add user-facing error handling
     } finally {
       setLoading(false)
     }
@@ -221,6 +283,7 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+        {/* Modal Header */}
         <DialogHeader>
           <DialogTitle>Edit Artwork</DialogTitle>
           <DialogDescription>
@@ -228,8 +291,11 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
           </DialogDescription>
         </DialogHeader>
         
+        {/* Main Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid gap-4">
+            
+            {/* Basic Information Section */}
             <div className="grid gap-2">
               <Label htmlFor="title">Title</Label>
               <Input
@@ -271,20 +337,22 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
               </Select>
             </div>
 
-            {/* Images Management */}
+            {/* Images Management Section */}
             <div className="grid gap-4">
               <div>
                 <Label>Artwork Images</Label>
                 <p className="text-sm text-muted-foreground">Drag and drop to reorder</p>
               </div>
               
-              {/* Image Grid */}
+              {/* Current Images Grid */}
               {images.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {images.map((image, index) => (
                     <Card 
                       key={image.id} 
-                      className={`relative group cursor-move ${image.markedForDeletion ? 'opacity-50 ring-2 ring-red-500' : ''}`}
+                      className={`relative group cursor-move ${
+                        image.markedForDeletion ? 'opacity-50 ring-2 ring-red-500' : ''
+                      }`}
                       draggable
                       onDragStart={(e) => handleDragStart(e, index)}
                       onDragOver={handleDragOver}
@@ -298,14 +366,14 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
                             className="w-full h-full object-cover rounded-md"
                           />
                           
-                          {/* Drag Handle */}
+                          {/* Drag Handle - appears on hover */}
                           <div className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <div className="bg-black/50 text-white p-1 rounded">
                               <GripVertical size={12} />
                             </div>
                           </div>
                           
-                          {/* Remove Button */}
+                          {/* Remove/Delete Button - appears on hover */}
                           <button
                             type="button"
                             onClick={() => image.isExisting ? toggleDeletion(image.id) : removeImage(image.id)}
@@ -324,7 +392,7 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
                           )}
                         </div>
                         
-                        {/* Image Info */}
+                        {/* Image Status Indicator */}
                         <div className="mt-2 text-xs text-gray-500 text-center">
                           {image.isExisting ? 'Current' : 'New'}
                         </div>
@@ -353,6 +421,7 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
                 />
               </div>
               
+              {/* Empty State Message */}
               {images.length === 0 && (
                 <p className="text-sm text-gray-500 text-center py-4">
                   No images yet. Upload some images to get started.
@@ -361,6 +430,7 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
             </div>
           </div>
 
+          {/* Action Buttons */}
           <DialogFooter className="gap-2">
             <Button 
               type="button" 

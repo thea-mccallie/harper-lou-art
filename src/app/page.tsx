@@ -7,28 +7,56 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { FaInstagram } from "react-icons/fa"
 
+// Interface for artwork data structure
 interface Artwork {
-  dateCreated: string
-  id: string
-  title: string
-  imageUrls: string[]
-  description: string
-  category: string
+  dateCreated: string   // ISO date string when artwork was created
+  id: string           // Unique identifier for the artwork
+  title: string        // Artwork title
+  imageUrls: string[]  // Array of S3 image URLs (first is main image)
+  description: string  // Artwork description/details
+  category: string     // Category classification (ceramics, painting, prints)
 }
 
-const HomePage = () => {
-  const [artworks, setArtworks] = useState<Artwork[]>([])
-  const [filteredArtworks, setFilteredArtworks] = useState<Artwork[]>([])
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+/**
+ * HomePage Component
+ * 
+ * Main landing page showcasing artist's portfolio with the following features:
+ * - Responsive grid layout displaying artwork cards
+ * - Category-based filtering system
+ * - Integration with Instagram and About page
+ * - Loading and error states for better UX
+ * - Click-to-filter and clear filter functionality
+ * 
+ * Data Flow:
+ * 1. Fetches all artworks from API on component mount
+ * 2. Maintains both original and filtered artwork arrays
+ * 3. Updates filtered array when category selection changes
+ * 4. Renders artwork cards with hover effects and navigation
+ * 
+ * Features:
+ * - Category filtering (Ceramics, Paintings, Prints)
+ * - Responsive design with mobile-first approach
+ * - Instagram integration via React Icons
+ * - Loading states and error handling
+ * - "Coming soon" state for empty categories
+ */
 
+const HomePage = () => {
+  // State management for artwork display and filtering
+  const [artworks, setArtworks] = useState<Artwork[]>([])                    // All artworks from API
+  const [filteredArtworks, setFilteredArtworks] = useState<Artwork[]>([])    // Filtered artworks for display
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)  // Currently selected filter category
+  const [loading, setLoading] = useState(true)                              // Loading state for API calls
+  const [error, setError] = useState("")                                     // Error message display
+
+  // Available artwork categories for filtering
   const categories = [
     { value: "ceramics", label: "Ceramics" },
     { value: "painting", label: "Paintings" },
     { value: "prints", label: "Prints" }
   ]
 
+  // Fetch all artworks from API on component mount
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
@@ -38,7 +66,7 @@ const HomePage = () => {
         }
         const data = await response.json()
         setArtworks(data)
-        setFilteredArtworks(data) // Initialize filtered artworks
+        setFilteredArtworks(data) // Initialize filtered artworks with all data
       } catch (error) {
         console.error("Error fetching artworks:", error)
         setError("Failed to fetch artworks")
@@ -50,7 +78,8 @@ const HomePage = () => {
     fetchArtworks()
   }, [])
 
-  // Filter artworks by category
+  // Filter artworks by selected category
+  // Runs whenever artworks data or selectedCategory changes
   useEffect(() => {
     if (selectedCategory) {
       const filtered = artworks.filter(artwork => 
@@ -58,18 +87,27 @@ const HomePage = () => {
       )
       setFilteredArtworks(filtered)
     } else {
-      setFilteredArtworks(artworks)
+      setFilteredArtworks(artworks) // Show all artworks when no category selected
     }
   }, [artworks, selectedCategory])
 
+  /**
+   * Handle category filter button clicks
+   * Toggles category selection - clicking same category clears filter
+   */
   const handleCategoryFilter = (category: string) => {
     setSelectedCategory(selectedCategory === category ? null : category)
   }
 
+  /**
+   * Handle title click to clear all filters
+   * Returns to showing all artworks
+   */
   const handleTitleClick = () => {
     setSelectedCategory(null)
   }
 
+  // Loading State - Show spinner while fetching artworks
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -81,6 +119,7 @@ const HomePage = () => {
     )
   }
 
+  // Error State - Show error message with retry option
   if (error) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -102,10 +141,12 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+        
+        {/* Page Header Section */}
         <div className="mb-8">
-          {/* Top Row with Title and Navigation */}
+          {/* Top Navigation Row */}
           <div className="flex justify-between items-center mb-6">
+            {/* Main Title - clickable to clear filters */}
             <h1 
               className="text-5xl font-light text-gray-900 cursor-pointer hover:text-gray-700 transition-colors duration-300"
               onClick={handleTitleClick}
@@ -113,15 +154,18 @@ const HomePage = () => {
               Harper Lou Art
             </h1>
             
-            {/* Right Side Navigation */}
+            {/* Right Side Navigation Links */}
             <div className="flex items-center gap-4">
+              {/* About Page Link */}
               <Link 
                 href="/about"
                 className="text-base font-light text-gray-700 hover:text-gray-900 transition-colors underline underline-offset-4 decoration-gray-300 hover:decoration-gray-600"
               >
                 About Me
               </Link>
-            <Button
+              
+              {/* Instagram Link Button */}
+              <Button
                 variant="ghost" 
                 size="sm"
                 className="text-gray-500 hover:text-gray-700 transition-colors"
@@ -140,8 +184,8 @@ const HomePage = () => {
                 onClick={() => handleCategoryFilter(category.value)}
                 className={`font-light text-lg transition-colors duration-300 ${
                   selectedCategory === category.value 
-                    ? 'text-gray-900 border-b border-gray-900' 
-                    : 'text-gray-500 hover:text-gray-900'
+                    ? 'text-gray-900 border-b border-gray-900'  // Active state styling
+                    : 'text-gray-500 hover:text-gray-900'       // Default and hover state
                 } bg-transparent border-none cursor-pointer`}
               >
                 {category.label}
@@ -154,6 +198,7 @@ const HomePage = () => {
             <div className="mt-4">
               <Badge variant="secondary" className="text-sm">
                 Showing: {categories.find(c => c.value === selectedCategory)?.label}
+                {/* Clear filter button */}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -167,8 +212,9 @@ const HomePage = () => {
           )}
         </div>
 
-        {/* Artwork Grid */}
+        {/* Main Content Area */}
         {filteredArtworks.length > 0 ? (
+          /* Artwork Grid - Responsive layout */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
             {filteredArtworks.map((artwork) => (
               <ArtworkCard
@@ -180,12 +226,14 @@ const HomePage = () => {
             ))}
           </div>
         ) : (
+          /* Empty State - No artworks found */
           <Card className="max-w-md mx-auto">
             <CardContent className="pt-6">
               <div className="text-center space-y-4">
                 <div className="text-gray-500 text-lg font-medium">
                   Coming soon...
                 </div>
+                {/* Show "View All" button when filtering returns no results */}
                 {selectedCategory && (
                   <Button variant="outline" onClick={handleTitleClick}>
                     View All Artworks

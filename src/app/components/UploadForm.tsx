@@ -8,34 +8,59 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Upload, X, GripVertical, Plus, Save, Loader2, AlertCircle, CheckCircle, Image as ImageIcon } from "lucide-react"
+import { Upload, X, GripVertical, Save, Loader2, AlertCircle, CheckCircle, Image as ImageIcon } from "lucide-react"
 
+// Interface for image preview objects during upload process
 interface ImagePreview {
-  file: File
-  url: string
-  id: string
+  file: File     // The actual file object for upload
+  url: string    // Blob URL for preview display
+  id: string     // Unique identifier for React keys and removal
 }
 
-const UploadForm = () => {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [category, setCategory] = useState("")
-  const [imagePreviews, setImagePreviews] = useState<ImagePreview[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+/**
+ * UploadForm Component
+ * 
+ * A comprehensive form for uploading new artwork with the following features:
+ * - Multi-image upload (1-10 images) with drag-and-drop reordering
+ * - Image preview with blob URLs for immediate feedback
+ * - S3 integration via presigned URLs for secure image uploads
+ * - Form validation for required fields
+ * - Memory leak prevention through proper URL cleanup
+ * - Real-time upload progress and error handling
+ * 
+ * Upload Process:
+ * 1. User selects images and fills form details
+ * 2. Images are uploaded to S3 using presigned URLs
+ * 3. Artwork metadata is saved to database with S3 image URLs
+ * 4. Form is reset and success message shown
+ */
 
+const UploadForm = () => {
+  // Form state management
+  const [title, setTitle] = useState("")                              // Artwork title (required)
+  const [description, setDescription] = useState("")                  // Artwork description (optional)
+  const [category, setCategory] = useState("")                        // Artwork category (paintings, prints, ceramics)
+  const [imagePreviews, setImagePreviews] = useState<ImagePreview[]>([])  // Array of selected images with preview URLs
+  const [loading, setLoading] = useState(false)                       // Loading state during form submission
+  const [error, setError] = useState("")                              // Error message display
+  const [success, setSuccess] = useState("")                          // Success message display
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)   // Index of currently dragged image for reordering
+
+  /**
+   * Handle file selection from input
+   * Creates blob URLs for immediate preview and validates file types/limits
+   */
   const handleFileChange = (files: FileList | null) => {
     if (files) {
       const newPreviews: ImagePreview[] = []
       Array.from(files).forEach((file) => {
+        // Validate file type and respect 10-image limit
         if (file.type.startsWith('image/') && imagePreviews.length + newPreviews.length < 10) {
-          const url = URL.createObjectURL(file)
+          const url = URL.createObjectURL(file)  // Create blob URL for preview
           newPreviews.push({
             file,
             url,
-            id: uuidv4()
+            id: uuidv4()  // Generate unique ID for React keys
           })
         }
       })
@@ -43,10 +68,14 @@ const UploadForm = () => {
     }
   }
 
+  /**
+   * Remove an image from the preview list
+   * Properly cleans up blob URLs to prevent memory leaks
+   */
   const removeImage = (id: string) => {
     setImagePreviews(prev => {
       const updated = prev.filter(preview => preview.id !== id)
-      // Clean up object URLs
+      // Clean up object URLs to prevent memory leaks
       const removed = prev.find(preview => preview.id === id)
       if (removed) {
         URL.revokeObjectURL(removed.url)
@@ -55,20 +84,33 @@ const UploadForm = () => {
     })
   }
 
+  // Drag and Drop Handlers for Image Reordering
+
+  /**
+   * Handle drag start event - store the index of dragged item
+   */
   const handleDragStart = (index: number) => {
     setDraggedIndex(index)
   }
 
+  /**
+   * Handle drag over event - allow drop by preventing default
+   */
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
   }
 
+  /**
+   * Handle drop event - reorder images based on drag position
+   */
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
     e.preventDefault()
     if (draggedIndex === null) return
 
     const newPreviews = [...imagePreviews]
     const draggedItem = newPreviews[draggedIndex]
+    
+    // Remove from current position and insert at new position
     newPreviews.splice(draggedIndex, 1)
     newPreviews.splice(dropIndex, 0, draggedItem)
     
@@ -76,12 +118,22 @@ const UploadForm = () => {
     setDraggedIndex(null)
   }
 
+  /**
+   * Handle form submission
+   * Process:
+   * 1. Validate form inputs
+   * 2. Upload each image to S3 via presigned URLs
+   * 3. Create artwork object with S3 URLs in correct order
+   * 4. Save artwork metadata to database
+   * 5. Clean up and reset form
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
     setSuccess("")
 
+    // Form validation
     if (imagePreviews.length === 0) {
       setError("At least one image is required")
       setLoading(false)
@@ -97,9 +149,9 @@ const UploadForm = () => {
     try {
       const imageUrls = []
 
-      // Upload each image using presigned URLs in the order they appear
+      // Step 1: Upload each image to S3 using presigned URLs in the correct order
       for (const preview of imagePreviews) {
-        // Step 1: Get presigned URL from backend
+        // Get presigned URL from backend
         const urlResponse = await fetch('/api/upload-url', {
           method: 'POST',
           headers: {
@@ -117,7 +169,7 @@ const UploadForm = () => {
 
         const { presignedUrl, imageUrl } = await urlResponse.json()
 
-        // Step 2: Upload file directly to S3 using presigned URL
+        // Upload file directly to S3 using presigned URL
         const uploadResponse = await fetch(presignedUrl, {
           method: 'PUT',
           body: preview.file,
@@ -133,7 +185,7 @@ const UploadForm = () => {
         imageUrls.push(imageUrl)
       }
 
-      // Create artwork object
+      // Step 2: Create artwork object with uploaded image URLs
       const artwork = {
         id: uuidv4(),
         title: title.trim(),
@@ -143,7 +195,7 @@ const UploadForm = () => {
         dateCreated: new Date().toISOString(),
       }
 
-      // Save artwork details to the database
+      // Step 3: Save artwork metadata to the database
       const response = await fetch("/api/artworks", {
         method: "POST",
         headers: {
@@ -156,12 +208,13 @@ const UploadForm = () => {
         throw new Error("Failed to upload artwork")
       }
 
+      // Step 4: Success - clean up and reset form
       setSuccess("Artwork uploaded successfully!")
       setTitle("")
       setDescription("")
       setCategory("")
       
-      // Clean up object URLs
+      // Clean up object URLs to prevent memory leaks
       imagePreviews.forEach(preview => {
         URL.revokeObjectURL(preview.url)
       })
@@ -177,6 +230,7 @@ const UploadForm = () => {
 
   return (
     <div className="space-y-6 p-6 max-w-4xl mx-auto">
+      {/* Page Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Upload Artwork</h1>
         <p className="text-muted-foreground">
@@ -199,9 +253,11 @@ const UploadForm = () => {
         </Alert>
       )}
 
+      {/* Main Upload Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Artwork Information */}
+          
+          {/* Artwork Information Section */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -213,6 +269,7 @@ const UploadForm = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Title Input - Required Field */}
               <div className="space-y-2">
                 <Label htmlFor="title">Title *</Label>
                 <Input
@@ -225,6 +282,7 @@ const UploadForm = () => {
                 />
               </div>
               
+              {/* Category Selection */}
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
                 <Select value={category} onValueChange={setCategory}>
@@ -239,6 +297,7 @@ const UploadForm = () => {
                 </Select>
               </div>
               
+              {/* Description Textarea */}
               <div className="space-y-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
@@ -252,7 +311,7 @@ const UploadForm = () => {
             </CardContent>
           </Card>
 
-          {/* Image Upload */}
+          {/* Image Upload Section */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -272,7 +331,7 @@ const UploadForm = () => {
                   accept="image/*"
                   multiple
                   onChange={(e) => handleFileChange(e.target.files)}
-                  disabled={imagePreviews.length >= 10}
+                  disabled={imagePreviews.length >= 10}  // Disable when limit reached
                 />
                 <p className="text-xs text-muted-foreground">
                   Select multiple images at once. Maximum 10 images.
@@ -282,7 +341,7 @@ const UploadForm = () => {
           </Card>
         </div>
 
-        {/* Image Previews with Drag and Drop */}
+        {/* Image Preview & Reordering Section */}
         {imagePreviews.length > 0 && (
           <Card>
             <CardHeader>
@@ -308,11 +367,15 @@ const UploadForm = () => {
                         alt={`Preview ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
+                      
+                      {/* Hover Overlay with Controls */}
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 flex items-center justify-center">
                         <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {/* Drag Handle */}
                           <div className="bg-white/90 rounded-full p-1">
                             <GripVertical className="w-4 h-4 text-gray-700" />
                           </div>
+                          {/* Remove Button */}
                           <Button
                             type="button"
                             size="sm"
@@ -324,11 +387,15 @@ const UploadForm = () => {
                           </Button>
                         </div>
                       </div>
+                      
+                      {/* Main Image Indicator */}
                       {index === 0 && (
                         <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
                           Main
                         </div>
                       )}
+                      
+                      {/* Image Position Number */}
                       <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                         {index + 1}
                       </div>

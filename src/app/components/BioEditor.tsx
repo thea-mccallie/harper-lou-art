@@ -5,23 +5,41 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Save, Loader2, User, CheckCircle, AlertCircle, Image as ImageIcon } from "lucide-react"
 
+// Interface for bio data structure
 interface BioItem {
-  id: string
-  name: string | null
-  content: string | null
-  imageUrl: string | null
+  id: string              // Unique identifier
+  name: string | null     // Artist name
+  content: string | null  // Bio content/description
+  imageUrl: string | null // Profile image URL
 }
 
-const BioEditor: React.FC = () => {
-  const [bio, setBio] = useState<BioItem | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [imageFile, setImageFile] = useState<File | null>(null)
+/**
+ * BioEditor Component
+ * 
+ * Provides an interface for editing artist bio information including:
+ * - Artist name
+ * - Bio content/description
+ * - Profile image upload (via S3 presigned URLs)
+ * 
+ * Features:
+ * - Real-time form updates
+ * - Image upload with preview
+ * - Success/error messaging
+ * - Loading states
+ * - Form validation
+ */
 
+const BioEditor: React.FC = () => {
+  // State management
+  const [bio, setBio] = useState<BioItem | null>(null)           // Current bio data
+  const [loading, setLoading] = useState<boolean>(true)          // Loading state for API calls
+  const [error, setError] = useState<string | null>(null)        // Error message display
+  const [success, setSuccess] = useState<string | null>(null)    // Success message display
+  const [imageFile, setImageFile] = useState<File | null>(null)  // Selected image file for upload
+
+  // Fetch bio data on component mount
   useEffect(() => {
     const fetchBio = async () => {
       try {
@@ -46,6 +64,13 @@ const BioEditor: React.FC = () => {
   }, [])
 
 
+  /**
+   * Handle saving bio data and image upload
+   * Process:
+   * 1. Upload new image to S3 if selected (via presigned URL)
+   * 2. Update bio data with new image URL
+   * 3. Send updated bio data to API
+   */
   const handleSave = async () => {
     if (!bio) return
 
@@ -56,7 +81,7 @@ const BioEditor: React.FC = () => {
     try {
       let imageUrl = bio.imageUrl || '' // Keep existing image URL by default
 
-      // If there's a new image file, upload it to S3 using presigned URL
+      // Handle image upload if new file selected
       if (imageFile) {
         // Step 1: Get presigned URL from backend
         const urlResponse = await fetch('/api/upload-url', {
@@ -92,7 +117,7 @@ const BioEditor: React.FC = () => {
         imageUrl = newImageUrl
       }
 
-      // Now send JSON data to API
+      // Prepare bio data for API update
       const bioData = {
         id: bio.id,
         name: bio.name || '',
@@ -100,6 +125,7 @@ const BioEditor: React.FC = () => {
         imageUrl: imageUrl
       }
 
+      // Send updated bio data to API
       const response = await fetch('/api/bio', {
         method: 'PUT',
         headers: {
@@ -129,6 +155,7 @@ const BioEditor: React.FC = () => {
     }
   }
 
+  // Loading state UI
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -142,6 +169,7 @@ const BioEditor: React.FC = () => {
 
   return (
     <div className="space-y-6 p-6 max-w-4xl mx-auto">
+      {/* Page Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Bio Editor</h1>
         <p className="text-muted-foreground">
@@ -164,6 +192,7 @@ const BioEditor: React.FC = () => {
         </Alert>
       )}
 
+      {/* Main Content - Two Column Layout */}
       {bio && (
         <div className="grid gap-6 md:grid-cols-2" key={bio.id}>
           {/* Profile Image Section */}
@@ -179,7 +208,7 @@ const BioEditor: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-col items-center space-y-4">
-                {/* Profile Image Display */}
+                {/* Current Profile Image Display */}
                 <div className="w-48 h-48 bg-gray-100 rounded-sm overflow-hidden flex items-center justify-center">
                   {bio.imageUrl ? (
                     <img 
@@ -188,6 +217,7 @@ const BioEditor: React.FC = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
+                    // Placeholder when no image exists
                     <div className="flex flex-col items-center text-gray-400">
                       <User className="w-12 h-12 mb-2" />
                       <span className="text-sm">No photo uploaded</span>
@@ -195,6 +225,7 @@ const BioEditor: React.FC = () => {
                   )}
                 </div>
                 
+                {/* Image Upload Input */}
                 <div className="w-full">
                   <Label htmlFor="photo-upload" className="text-sm font-medium">
                     Upload New Photo
@@ -223,6 +254,7 @@ const BioEditor: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Artist Name Input */}
               <div className="space-y-2">
                 <Label htmlFor="name">Artist Name</Label>
                 <Input
@@ -234,6 +266,7 @@ const BioEditor: React.FC = () => {
                 />
               </div>
               
+              {/* Bio Content Textarea */}
               <div className="space-y-2">
                 <Label htmlFor="content">Bio Content</Label>
                 <Textarea
@@ -243,6 +276,7 @@ const BioEditor: React.FC = () => {
                   placeholder="Tell your story as an artist. Describe your background, artistic journey, inspirations, and what makes your work unique..."
                   className="min-h-[150px] resize-none"
                 />
+                {/* Character counter */}
                 <p className="text-xs text-muted-foreground">
                   {(bio.content || '').length}/1000 characters
                 </p>

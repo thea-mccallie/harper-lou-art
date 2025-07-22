@@ -1,10 +1,10 @@
 "use client"
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { FaInstagram } from "react-icons/fa"
 import { Mail, Copy, Check } from "lucide-react"
 
+// Type definition for bio data from API
 interface Bio {
   id: string
   name: string
@@ -13,22 +13,26 @@ interface Bio {
 }
 
 const AboutPage = () => {
+  // State management for bio data and UI states
   const [bioData, setBioData] = useState<Bio | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [emailCopied, setEmailCopied] = useState(false)
 
+  // Handle email copy to clipboard functionality
   const handleEmailCopy = async () => {
-    const email = "harper@example.com"
+    const email = "harper@example.com" // TODO: replace with real email
     try {
       await navigator.clipboard.writeText(email)
       setEmailCopied(true)
+      // Reset copied state after 2 seconds
       setTimeout(() => setEmailCopied(false), 2000)
     } catch (err) {
       console.error('Failed to copy email:', err)
     }
   }
 
+  // Fetch bio data from API on component mount
   useEffect(() => {
     const fetchBio = async () => {
       try {
@@ -49,6 +53,7 @@ const AboutPage = () => {
     fetchBio()
   }, [])
 
+  // Loading state UI
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -60,6 +65,7 @@ const AboutPage = () => {
     )
   }
 
+  // Error state UI
   if (error || !bioData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -72,35 +78,33 @@ const AboutPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          {/* Top Row with Title and Navigation */}
-          <div className="flex justify-between items-center mb-6">
-            <Link href="/">
-              <h1 className="text-2xl font-light text-gray-900 cursor-pointer hover:text-gray-700 transition-colors duration-300">
-                Harper Lou Art
-              </h1>
-            </Link>
-          </div>
+      {/* Page Header */}
+      <header className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center">
+          <Link href="/">
+            <h1 className="text-2xl font-light text-gray-900 cursor-pointer hover:text-gray-700 transition-colors duration-300">
+              Harper Lou Art
+            </h1>
+          </Link>
         </div>
-      </div>
+      </header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 pb-16">
+      <main className="container mx-auto px-4 pb-16">
         <div className="max-w-6xl mx-auto">
-          {/* Two Column Layout - Clean and Minimal */}
+          {/* Two Column Layout */}
           <div className="grid lg:grid-cols-2 gap-16 items-start">
-            {/* Left Column - Image */}
+            
+            {/* Left Column - Artist Name and Image */}
             <div className="flex flex-col items-center space-y-8">
-              {/* Name */}
+              {/* Artist Name */}
               {bioData.name && (
                 <h2 className="text-4xl lg:text-5xl font-light text-gray-900 text-center">
                   {bioData.name}
                 </h2>
               )}
               
-              {/* Image */}
+              {/* Profile Image */}
               {bioData.imageUrl ? (
                 <div className="w-full max-w-md">
                   <img
@@ -110,6 +114,7 @@ const AboutPage = () => {
                   />
                 </div>
               ) : (
+                // Fallback initials when no image available
                 <div className="w-64 h-64 bg-gray-200 rounded-sm flex items-center justify-center">
                   <span className="text-4xl font-light text-gray-400">
                     {bioData.name 
@@ -124,9 +129,10 @@ const AboutPage = () => {
             {/* Right Column - Bio Text and Contact */}
             <div className="lg:pt-20">
               <div className="space-y-8">
-                {/* Bio Text */}
+                {/* Bio Text Content */}
                 {bioData.content ? (
                   <div className="space-y-6">
+                    {/* Split content by double line breaks for paragraphs */}
                     {bioData.content.split('\n\n').map((paragraph: string, index: number) => (
                       <p key={index} className="text-lg text-gray-700 leading-relaxed font-light">
                         {paragraph}
@@ -142,7 +148,8 @@ const AboutPage = () => {
                 {/* Contact Section */}
                 <div className="pt-4">
                   <div className="flex items-center space-x-8">
-                    {/* Instagram */}
+                    
+                    {/* Instagram Link */}
                     <a
                       href="https://www.instagram.com/harperlouharperlou/"
                       target="_blank"
@@ -155,7 +162,7 @@ const AboutPage = () => {
                       </span>
                     </a>
 
-                    {/* Email */}
+                    {/* Email Contact with Copy Functionality */}
                     <div 
                       className="group relative flex items-center space-x-2 cursor-pointer"
                       onClick={handleEmailCopy}
@@ -165,7 +172,7 @@ const AboutPage = () => {
                         Email
                       </span>
                       
-                      {/* Copy Icon - shows on hover */}
+                      {/* Copy/Check Icon - appears on hover */}
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         {emailCopied ? (
                           <Check className="w-4 h-4 text-green-600" />
@@ -177,6 +184,7 @@ const AboutPage = () => {
                       {/* Email Tooltip */}
                       <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-sm px-3 py-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-10">
                         {emailCopied ? "Copied!" : "harper@example.com • Click to copy"}
+                        {/* Tooltip arrow */}
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
                       </div>
                     </div>
@@ -186,17 +194,17 @@ const AboutPage = () => {
             </div>
           </div>
 
-          {/* Back Link - Minimal */}
-          <div className="text-center mt-16">
+          {/* Navigation - Back to Gallery */}
+          <footer className="text-center mt-16">
             <Link 
               href="/"
               className="text-sm font-light text-gray-400 hover:text-gray-700 transition-colors"
             >
               Back to Gallery
             </Link>
-          </div>
+          </footer>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

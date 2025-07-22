@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getBio, updateBio } from "@/lib/db"
 
+// GET /api/bio - Retrieve artist bio information
 export async function GET(request: NextRequest) {
   try {
     const bio = await getBio()
@@ -14,9 +15,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// PUT /api/bio - Update artist bio information
 export async function PUT(request: NextRequest) {
   try {
     const contentType = request.headers.get("content-type") || ""
+    
+    // Check for unsupported multipart/form-data uploads
     if (contentType.includes("multipart/form-data")) {
       return NextResponse.json(
         { error: "File uploads are not supported in app directory API routes. Use pages/api/bio.ts instead." },
@@ -24,7 +28,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // For JSON requests (no file upload)
+    // Handle JSON requests (no file upload)
     const bioUpdates = await request.json()
     await updateBio(bioUpdates)
     

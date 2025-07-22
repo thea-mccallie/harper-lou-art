@@ -7,21 +7,36 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Edit, Search, Loader2, ImageIcon } from "lucide-react"
 
+// Interface for artwork item structure
 interface ArtworkItem {
-  id: string
-  title: string
-  imageUrls: string[]
-  category: string
-  description: string
+  id: string           // Unique identifier
+  title: string        // Artwork title
+  imageUrls: string[]  // Array of image URLs
+  category: string     // Artwork category/type
+  description: string  // Detailed description
 }
 
-const ArtworkList = () => {
-  const [artworks, setArtworks] = useState<ArtworkItem[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [editingArtwork, setEditingArtwork] = useState<ArtworkItem | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+/**
+ * ArtworkList Component
+ * 
+ * Displays a grid of artwork cards for management purposes.
+ * Features include:
+ * - Search/filter functionality
+ * - Edit artwork modal
+ * - Delete artwork capability
+ * - Responsive grid layout
+ * - Loading and empty states
+ */
 
+const ArtworkList = () => {
+  // State management
+  const [artworks, setArtworks] = useState<ArtworkItem[]>([])        // All artworks from API
+  const [isLoading, setIsLoading] = useState(true)                   // Loading state
+  const [searchTerm, setSearchTerm] = useState("")                   // Search filter
+  const [editingArtwork, setEditingArtwork] = useState<ArtworkItem | null>(null) // Currently editing artwork
+  const [isModalOpen, setIsModalOpen] = useState(false)             // Modal visibility state
+
+  // Fetch all artworks on component mount
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
@@ -41,20 +56,24 @@ const ArtworkList = () => {
     fetchArtworks()
   }, [])
 
+  // Debug log for editing artwork changes
   useEffect(() => {
     console.log("Updated editingArtwork:", editingArtwork)
   }, [editingArtwork])
 
+  // Filter artworks based on search term
   const filteredArtworks = artworks.filter((artwork) =>
     typeof artwork.title === 'string' && artwork.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  // Handle editing an artwork - opens modal with selected artwork
   const handleEdit = (artwork: ArtworkItem) => {
     console.log("Editing artwork:", artwork) // Debugging statement
     setEditingArtwork({ ...artwork }) // Ensures a new object is created
     setIsModalOpen(true)
   }
 
+  // Handle updating an artwork via API
   const handleUpdate = async (updatedArtwork: ArtworkItem) => {
     if (!editingArtwork) return
 
@@ -77,6 +96,7 @@ const ArtworkList = () => {
       }
 
       const updatedArtworkData = await response.json()
+      // Update local state with new artwork data
       setArtworks((prevArtworks) =>
         prevArtworks.map((artwork) =>
           artwork.id === updatedArtworkData.id ? updatedArtworkData : artwork
@@ -90,6 +110,7 @@ const ArtworkList = () => {
     }
   }
 
+  // Handle deleting an artwork via API
   const handleDelete = async (id: string) => {
     try {
       const response = await fetch(`/api/artworks/${id}`, {
@@ -102,6 +123,7 @@ const ArtworkList = () => {
         throw new Error("Failed to delete artwork")
       }
 
+      // Remove artwork from local state
       setArtworks((prevArtworks) => prevArtworks.filter((artwork) => artwork.id !== id))
       console.log("Artwork deleted successfully")
       setIsModalOpen(false)
@@ -110,6 +132,7 @@ const ArtworkList = () => {
     }
   }
 
+  // Handle form input changes in edit modal
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     if (!editingArtwork) return
     const { name, value } = e.target
@@ -118,6 +141,7 @@ const ArtworkList = () => {
 
   return (
     <div className="space-y-6 p-6">
+      {/* Page Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Artwork Management</h1>
         <p className="text-muted-foreground">
@@ -137,8 +161,9 @@ const ArtworkList = () => {
         />
       </div>
 
-      {/* Content */}
+      {/* Main Content Area */}
       {isLoading ? (
+        // Loading State
         <div className="flex items-center justify-center py-12">
           <div className="flex items-center space-x-2">
             <Loader2 className="h-6 w-6 animate-spin" />
@@ -146,6 +171,7 @@ const ArtworkList = () => {
           </div>
         </div>
       ) : filteredArtworks.length === 0 ? (
+        // Empty State - no artworks found
         <div className="text-center py-12">
           <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">No artworks found</h3>
@@ -154,16 +180,21 @@ const ArtworkList = () => {
           </p>
         </div>
       ) : (
+        // Artwork Grid
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredArtworks.map((artwork) => (
             <Card key={artwork.id} className="group hover:shadow-lg transition-shadow duration-300">
+              {/* Card Header - Image and Edit Button */}
               <CardHeader className="p-0">
                 <div className="relative aspect-square overflow-hidden rounded-t-lg">
+                  {/* Artwork Thumbnail */}
                   <img
                     src={artwork.imageUrls && artwork.imageUrls.length > 0 ? artwork.imageUrls[0] : "/placeholder.svg"}
                     alt={artwork.title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
+                  
+                  {/* Hover Overlay with Edit Button */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
                     <Button
                       size="sm"
@@ -175,6 +206,8 @@ const ArtworkList = () => {
                       Edit
                     </Button>
                   </div>
+                  
+                  {/* Category Badge */}
                   {artwork.category && (
                     <Badge 
                       variant="secondary" 
@@ -186,6 +219,7 @@ const ArtworkList = () => {
                 </div>
               </CardHeader>
               
+              {/* Card Content - Title and Description */}
               <CardContent className="p-4">
                 <CardTitle className="text-lg line-clamp-2 mb-2">
                   {artwork.title}
@@ -197,6 +231,7 @@ const ArtworkList = () => {
                 )}
               </CardContent>
 
+              {/* Card Footer - Edit Button */}
               <CardFooter className="p-4 pt-0">
                 <Button 
                   variant="outline" 

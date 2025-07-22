@@ -10,10 +10,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogIn, LogOut, Loader2 } from "lucide-react";
 
+/**
+ * ArtistPortalPage Component
+ * 
+ * Protected artist management portal with Google OAuth authentication.
+ * Provides three main management interfaces:
+ * - Upload new artwork with multiple images
+ * - Manage existing artwork (edit/delete)
+ * - Edit artist bio and profile information
+ * 
+ * Authentication Flow:
+ * 1. Shows loading state while checking authentication
+ * 2. Displays login card if user is not authenticated
+ * 3. Shows tabbed portal interface if user is authenticated
+ * 
+ * Features:
+ * - Google OAuth integration via NextAuth.js
+ * - Responsive tabbed interface for different management tasks
+ * - User session display with sign out functionality
+ * - Protected access - only authorized emails can sign in
+ */
+
 const ArtistPortalPage = () => {
+  // NextAuth session management - handles authentication state
   const { data: session, status } = useSession()
 
-  // Loading state
+  // Loading State - Show spinner while authentication status is being determined
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--off-white)]">
@@ -25,7 +47,7 @@ const ArtistPortalPage = () => {
     )
   }
 
-  // Not authenticated - show login page
+  // Unauthenticated State - Show login interface
   if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--off-white)]">
@@ -38,6 +60,7 @@ const ArtistPortalPage = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Google OAuth Sign In Button */}
               <Button 
                 onClick={() => signIn('google')} 
                 className="w-full"
@@ -46,6 +69,8 @@ const ArtistPortalPage = () => {
                 <LogIn className="w-4 h-4 mr-2" />
                 Sign in with Google
               </Button>
+              
+              {/* Navigation back to homepage */}
               <div className="text-center">
                 <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
                   ← Back to Homepage
@@ -58,17 +83,21 @@ const ArtistPortalPage = () => {
     )
   }
 
-  // Authenticated - show portal content
+  // Authenticated State - Show main portal interface
   return (
     <div className="min-h-screen flex flex-col bg-[var(--off-white)]">
       <main className="main-container px-6 py-4">
+        
+        {/* Portal Header with Navigation and User Info */}
         <div className="flex justify-between items-center mb-6">
+          {/* Homepage Link */}
           <Link href="/" className="inline-block">
             <h1 className="text-4xl font-light text-gray-900 cursor-pointer hover:text-gray-700 transition-colors duration-300">
               Homepage
             </h1>
           </Link>
           
+          {/* User Info and Sign Out */}
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-600">Welcome, {session.user?.name}!</span>
             <Button 
@@ -82,21 +111,26 @@ const ArtistPortalPage = () => {
           </div>
         </div>
         
+        {/* Main Portal Content - Tabbed Interface */}
         <Tabs defaultValue="upload" className="w-full max-w-4xl mx-auto">
+          {/* Tab Navigation */}
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="upload">Upload Artwork</TabsTrigger>
             <TabsTrigger value="list">Artwork List</TabsTrigger>
             <TabsTrigger value="bio">Edit Bio</TabsTrigger>
           </TabsList>
           
+          {/* Upload Tab - New artwork creation */}
           <TabsContent value="upload" className="mt-6">
             <UploadForm />
           </TabsContent>
           
+          {/* List Tab - Manage existing artworks */}
           <TabsContent value="list" className="mt-6">
             <ArtworkList />
           </TabsContent>
           
+          {/* Bio Tab - Edit artist profile information */}
           <TabsContent value="bio" className="mt-6">
             <BioEditor />
           </TabsContent>

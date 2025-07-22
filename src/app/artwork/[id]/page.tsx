@@ -12,6 +12,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 
+// Type definition for artwork data from API
 interface Artwork {
   id: string
   title: string
@@ -20,9 +21,13 @@ interface Artwork {
 }
 
 const ArtworkPage = () => {
+  // Get artwork ID from URL parameters
   const params = useParams()
+  
+  // State for artwork data
   const [artwork, setArtwork] = useState<Artwork | null>(null)
 
+  // Fetch artwork data on component mount
   useEffect(() => {
     const fetchArtwork = async () => {
       try {
@@ -40,6 +45,7 @@ const ArtworkPage = () => {
     fetchArtwork()
   }, [params.id])
 
+  // Loading state UI
   if (!artwork) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -53,50 +59,54 @@ const ArtworkPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          {/* Top Row with Title and Navigation */}
-          <div className="flex justify-between items-center mb-6">
-            <Link href="/">
-              <h1 className="text-2xl font-light text-gray-900 cursor-pointer hover:text-gray-700 transition-colors duration-300">
-                Harper Lou Art
-              </h1>
+      {/* Page Header */}
+      <header className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center">
+          {/* Site Title */}
+          <Link href="/">
+            <h1 className="text-2xl font-light text-gray-900 cursor-pointer hover:text-gray-700 transition-colors duration-300">
+              Harper Lou Art
+            </h1>
+          </Link>
+          
+          {/* Navigation Links */}
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/about"
+              className="text-base font-light text-gray-700 hover:text-gray-900 transition-colors underline underline-offset-4 decoration-gray-300 hover:decoration-gray-600"
+            >
+              About Me
             </Link>
             
-            {/* Right Side Navigation */}
-            <div className="flex items-center gap-4">
-              <Link 
-                href="/about"
-                className="text-base font-light text-gray-700 hover:text-gray-900 transition-colors underline underline-offset-4 decoration-gray-300 hover:decoration-gray-600"
-              >
-                About Me
-              </Link>
-              <Button
-                variant="ghost" 
-                size="sm"
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-                onClick={() => window.open('https://www.instagram.com/harperlouharperlou/', '_blank')}
-                >
-                <FaInstagram className="w-5 h-5" />
-               </Button>
-            </div>
+            {/* Instagram Button */}
+            <Button
+              variant="ghost" 
+              size="sm"
+              className="text-gray-500 hover:text-gray-700 transition-colors"
+              onClick={() => window.open('https://www.instagram.com/harperlouharperlou/', '_blank')}
+            >
+              <FaInstagram className="w-5 h-5" />
+            </Button>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 pb-12">
+      <main className="container mx-auto px-6 pb-12">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Left Column - Title and Description */}
-          <div className="space-y-6">
+          
+          {/* Left Column - Artwork Details */}
+          <section className="space-y-6">
+            {/* Artwork Title */}
             <div>
               <h1 className="text-4xl lg:text-5xl font-sans font-light text-gray-900 mb-4 leading-tight">
                 {artwork.title}
               </h1>
+              {/* Decorative divider */}
               <div className="w-12 h-0.5 bg-gray-300"></div>
             </div>
             
+            {/* Artwork Description */}
             {artwork.description && (
               <div className="prose prose-gray max-w-none">
                 <p className="text-lg text-gray-700 leading-relaxed">
@@ -104,10 +114,10 @@ const ArtworkPage = () => {
                 </p>
               </div>
             )}
-          </div>
+          </section>
 
-          {/* Right Column - Carousel */}
-          <div className="w-full">
+          {/* Right Column - Image Carousel */}
+          <section className="w-full">
             <Carousel className="w-full">
               <CarouselContent>
                 {artwork.imageUrls.map((imageUrl, index) => (
@@ -122,6 +132,8 @@ const ArtworkPage = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
+              
+              {/* Carousel Navigation - only show if multiple images */}
               {artwork.imageUrls.length > 1 && (
                 <>
                   <CarouselPrevious className="left-4" />
@@ -136,17 +148,19 @@ const ArtworkPage = () => {
                 {artwork.imageUrls.length} image{artwork.imageUrls.length > 1 ? 's' : ''}
               </div>
             )}
-          </div>
+          </section>
         </div>
-        <div className="text-center mt-16">
-            <Link 
-              href="/"
-              className="text-sm font-light text-gray-400 hover:text-gray-700 transition-colors"
-            >
-              Back to Gallery
-            </Link>
-          </div>
-      </div>
+        
+        {/* Back Navigation */}
+        <footer className="text-center mt-16">
+          <Link 
+            href="/"
+            className="text-sm font-light text-gray-400 hover:text-gray-700 transition-colors"
+          >
+            Back to Gallery
+          </Link>
+        </footer>
+      </main>
     </div>
   )
 }
