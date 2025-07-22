@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Upload, Save, Loader2, User, CheckCircle, AlertCircle, Image as ImageIcon } from "lucide-react"
+import { Save, Loader2, User, CheckCircle, AlertCircle, Image as ImageIcon } from "lucide-react"
 
 interface BioItem {
   id: string
@@ -109,6 +109,8 @@ const BioEditor: React.FC = () => {
       })
 
       if (!response.ok) {
+        const errorData = await response.text()
+        console.error('API Error:', errorData)
         throw new Error('Failed to update bio')
       }
 
@@ -143,7 +145,7 @@ const BioEditor: React.FC = () => {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Bio Editor</h1>
         <p className="text-muted-foreground">
-          Update your artist bio, profile information, and photo.
+          Update artist bio, to be displayed on about me page.
         </p>
       </div>
 
@@ -163,7 +165,7 @@ const BioEditor: React.FC = () => {
       )}
 
       {bio && (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2" key={bio.id}>
           {/* Profile Image Section */}
           <Card>
             <CardHeader>
@@ -177,12 +179,21 @@ const BioEditor: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-col items-center space-y-4">
-                <Avatar className="w-32 h-32">
-                  <AvatarImage src={bio.imageUrl || undefined} alt={bio.name || 'Profile'} />
-                  <AvatarFallback className="text-2xl">
-                    {bio.name ? bio.name.charAt(0).toUpperCase() : <User className="w-8 h-8" />}
-                  </AvatarFallback>
-                </Avatar>
+                {/* Profile Image Display */}
+                <div className="w-48 h-48 bg-gray-100 rounded-sm overflow-hidden flex items-center justify-center">
+                  {bio.imageUrl ? (
+                    <img 
+                      src={bio.imageUrl} 
+                      alt={bio.name || 'Profile'} 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center text-gray-400">
+                      <User className="w-12 h-12 mb-2" />
+                      <span className="text-sm">No photo uploaded</span>
+                    </div>
+                  )}
+                </div>
                 
                 <div className="w-full">
                   <Label htmlFor="photo-upload" className="text-sm font-medium">
@@ -210,9 +221,6 @@ const BioEditor: React.FC = () => {
                 <User className="w-5 h-5 mr-2" />
                 Artist Information
               </CardTitle>
-              <CardDescription>
-                Your name and bio will be displayed on your artist page.
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">

@@ -273,7 +273,10 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
 
             {/* Images Management */}
             <div className="grid gap-4">
-              <Label>Artwork Images</Label>
+              <div>
+                <Label>Artwork Images</Label>
+                <p className="text-sm text-muted-foreground">Drag and drop to reorder</p>
+              </div>
               
               {/* Image Grid */}
               {images.length > 0 && (

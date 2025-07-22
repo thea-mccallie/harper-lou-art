@@ -180,7 +180,7 @@ const UploadForm = () => {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Upload Artwork</h1>
         <p className="text-muted-foreground">
-          Upload your artwork with multiple images and detailed information.
+          Upload artwork with 1 - 10 images and a description.
         </p>
       </div>
 
