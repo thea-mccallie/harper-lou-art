@@ -26,7 +26,7 @@ const HomePage = () => {
   const categories = [
     { value: "ceramics", label: "Ceramics" },
     { value: "painting", label: "Paintings" },
-    { value: "sculpture", label: "Sculptures" }
+    { value: "prints", label: "Prints" }
   ]
 
   useEffect(() => {
@@ -184,14 +184,8 @@ const HomePage = () => {
             <CardContent className="pt-6">
               <div className="text-center space-y-4">
                 <div className="text-gray-500 text-lg font-medium">
-                  No artworks found
+                  Coming soon...
                 </div>
-                <p className="text-gray-600">
-                  {selectedCategory 
-                    ? `No artworks in the "${categories.find(c => c.value === selectedCategory)?.label}" category.`
-                    : "No artworks available at the moment."
-                  }
-                </p>
                 {selectedCategory && (
                   <Button variant="outline" onClick={handleTitleClick}>
                     View All Artworks

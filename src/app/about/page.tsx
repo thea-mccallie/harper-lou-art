@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { FaInstagram } from "react-icons/fa"
-import { Mail } from "lucide-react"
+import { Mail, Copy, Check } from "lucide-react"
 
 interface Bio {
   id: string
@@ -16,6 +16,18 @@ const AboutPage = () => {
   const [bioData, setBioData] = useState<Bio | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [emailCopied, setEmailCopied] = useState(false)
+
+  const handleEmailCopy = async () => {
+    const email = "harper@example.com"
+    try {
+      await navigator.clipboard.writeText(email)
+      setEmailCopied(true)
+      setTimeout(() => setEmailCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy email:', err)
+    }
+  }
 
   useEffect(() => {
     const fetchBio = async () => {
@@ -144,15 +156,27 @@ const AboutPage = () => {
                     </a>
 
                     {/* Email */}
-                    <div className="group relative flex items-center space-x-2 cursor-pointer">
+                    <div 
+                      className="group relative flex items-center space-x-2 cursor-pointer"
+                      onClick={handleEmailCopy}
+                    >
                       <Mail className="w-5 h-5 text-gray-400 group-hover:text-gray-700 transition-colors" />
                       <span className="text-sm font-light text-gray-500 group-hover:text-gray-800 transition-colors">
                         Email
                       </span>
                       
+                      {/* Copy Icon - shows on hover */}
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        {emailCopied ? (
+                          <Check className="w-4 h-4 text-green-600" />
+                        ) : (
+                          <Copy className="w-4 h-4 text-gray-400" />
+                        )}
+                      </div>
+                      
                       {/* Email Tooltip */}
                       <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-sm px-3 py-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-10">
-                        harper@example.com
+                        {emailCopied ? "Copied!" : "harper@example.com • Click to copy"}
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
                       </div>
                     </div>

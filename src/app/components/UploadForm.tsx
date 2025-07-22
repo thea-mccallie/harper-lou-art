@@ -232,12 +232,8 @@ const UploadForm = () => {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="painting">Painting</SelectItem>
-                    <SelectItem value="sculpture">Sculpture</SelectItem>
-                    <SelectItem value="photography">Photography</SelectItem>
-                    <SelectItem value="drawing">Drawing</SelectItem>
-                    <SelectItem value="digital">Digital Art</SelectItem>
-                    <SelectItem value="mixed-media">Mixed Media</SelectItem>
+                    <SelectItem value="paintings">Painting</SelectItem>
+                    <SelectItem value="prints">Prints</SelectItem>
                     <SelectItem value="ceramics">Ceramics</SelectItem>
                   </SelectContent>
                 </Select>

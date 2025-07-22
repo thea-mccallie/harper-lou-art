@@ -138,6 +138,14 @@ const ArtworkPage = () => {
             )}
           </div>
         </div>
+        <div className="text-center mt-16">
+            <Link 
+              href="/"
+              className="text-sm font-light text-gray-400 hover:text-gray-700 transition-colors"
+            >
+              Back to Gallery
+            </Link>
+          </div>
       </div>
     </div>
   )

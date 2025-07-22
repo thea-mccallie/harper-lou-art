@@ -265,8 +265,8 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="painting">Painting</SelectItem>
-                  <SelectItem value="sculpture">Sculpture</SelectItem>
-                  <SelectItem value="photography">Photography</SelectItem>
+                  <SelectItem value="ceramics">Ceramics</SelectItem>
+                  <SelectItem value="prints">Prints</SelectItem>
                 </SelectContent>
               </Select>
             </div>
