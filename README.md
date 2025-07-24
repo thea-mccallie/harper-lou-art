@@ -4,7 +4,7 @@
 
 <img src="/.github/images/banner.png" alt="Project Banner" width="600">
 
-[![harperlouart.com](https://img.shields.io/badge/demo-live-green.svg)](https://your-domain.com)
+[![harperlouart.com](https://img.shields.io/badge/demo-live-green.svg)](https://harper-lou-art.vercel.app/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-15.1.6-black.svg)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
