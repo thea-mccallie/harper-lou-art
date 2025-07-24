@@ -2,7 +2,6 @@
 
 > A modern, responsive portfolio website for showcasing artwork with an integrated artist management portal.
 
-TODO IMAGE Insert project banner
 ![Project Banner](./docs/images/banner.png)
 
 [![harperlouart.com](https://img.shields.io/badge/demo-live-green.svg)](https://your-domain.com)
@@ -37,28 +36,37 @@ Harper Lou Art is a full-stack portfolio website designed for an artist to showc
 - **Category Filtering**: Dynamic artwork filtering by medium
 - **Modern UI**: Built with Shadcn/UI components and Tailwind CSS
 
-TODO IMAGE add screenshot
-![Homepage Screenshot](./docs/images/homepage.png)
-
 ## ✨ Features
 
-TODO IMAGE sreenshots to every feature
 ### Public Portfolio
 - [x] Responsive artwork gallery with grid layout
+![Artwork hover](./docs/images/homepage_interactive.png)
 - [x] Category-based filtering (Ceramics, Paintings, Prints)
+![Filter](./docs/images/filtered_homepage.png)
 - [x] Individual artwork detail pages with image carousel
+![Artwork page](./docs/images/artwork.png)
 - [x] Artist bio and about page
+![Bio](./docs/images/bio.png)
 - [x] Instagram integration
 - [x] Copy and paste email
+![Email copy](./docs/images/email_copy.png)
 - [x] Mobile-optimized design
+![mobile1](./docs/images/mobile1.png)
+![mobile2](./docs/images/mobile2.png)
+![mobile3](./docs/images/mobile3.png)
 
 ### Artist Portal
+![artwork upload](./docs/images/upload_artwork.png)
 - [x] Google OAuth authentication with email authorization
 - [x] Multi-image artwork upload with S3 integration
 - [x] Artworks and bio information stored with DynamoDB
 - [x] Drag-and-drop image reordering
+![Image reorder](./docs/images/image_reorder.png)
 - [x] Artwork management (edit/delete existing pieces)
+![Artwork List page](./docs/images/artwork_list.png)
+![Artwork editor](./docs/images/artwork_editor.png)
 - [x] Bio editor with profile image upload
+![Bio editor](./docs/images/bio_editor.png)
 - [x] Real-time preview and validation
 
 ### Technical Features
@@ -69,9 +77,6 @@ TODO IMAGE sreenshots to every feature
 - [x] Component documentation and testing ready
 - [x] DynamoDB for scalability and predictable performance
 
-TODO IMAGE screnshot
-
-![Artist Portal Screenshot](./docs/images/portal.png)
 
 ## 🛠 Tech Stack
 
@@ -116,9 +121,6 @@ TODO IMAGE screnshot
 2. **Authentication**: NextAuth.js handles Google OAuth with email validation
 3. **Image Upload**: Presigned S3 URLs enable direct browser-to-S3 uploads
 4. **Content Management**: Protected API routes handle CRUD operations
-
-TODO IMAGE add image
-![Architecture Diagram](./docs/images/architecture.png)
 
 ## 📁 Project Structure
 
@@ -309,6 +311,3 @@ AWS_BUCKET_NAME="your-s3-bucket-name"
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 **Built with 🩵🧡🩷 for art and artsits**
-
-TODO IMAGE image
-![Footer Image](./docs/images/footer.png)
