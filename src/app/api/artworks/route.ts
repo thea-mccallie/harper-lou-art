@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getArtworks, createArtwork } from "@/lib/db"
 
 // GET /api/artworks - Retrieve all artworks
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const artworks = await getArtworks()
     return NextResponse.json(artworks, { status: 200 })

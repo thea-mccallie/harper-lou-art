@@ -70,14 +70,14 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
    * Initialize images array from existing artwork imageUrls
    * Converts string URLs to ImageItem objects for consistent handling
    */
-  const initializeImages = (): ImageItem[] => {
+  const initializeImages = React.useCallback((): ImageItem[] => {
     return editingArtwork.imageUrls.map((url, index) => ({
       id: `existing-${index}`,
       url,
       isExisting: true,
       markedForDeletion: false
     }))
-  }
+  }, [editingArtwork.imageUrls])
 
   // State management
   const [images, setImages] = useState<ImageItem[]>(initializeImages())     // Current images in editor
@@ -89,7 +89,7 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
     if (isOpen) {
       setImages(initializeImages())
     }
-  }, [editingArtwork, isOpen])
+  }, [editingArtwork, isOpen, initializeImages])
 
   // Early return if modal is closed
   if (!isOpen) return null

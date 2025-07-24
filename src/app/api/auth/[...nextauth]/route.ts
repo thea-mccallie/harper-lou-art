@@ -9,7 +9,7 @@ const handler = NextAuth({
     })
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user }) {
       // Only allow specific authorized emails
       const authorizedEmails = process.env.AUTHORIZED_EMAILS?.split(',').map(email => email.trim()) || []
       
@@ -19,10 +19,10 @@ const handler = NextAuth({
       
       return false // Deny access for unauthorized emails
     },
-    async session({ session, token }) {
+    async session({ session }) {
       return session
     },
-    async jwt({ token, user }) {
+    async jwt({ token }) {
       return token
     },
   },

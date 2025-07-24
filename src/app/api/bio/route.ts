@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getBio, updateBio } from "@/lib/db"
 
 // GET /api/bio - Retrieve artist bio information
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const bio = await getBio()
     if (!bio) {
