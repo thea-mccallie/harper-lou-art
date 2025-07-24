@@ -2,7 +2,7 @@
 
 > A modern, responsive portfolio website for showcasing artwork with an integrated artist management portal.
 
-![Project Banner](/.github/images/banner.png)
+<img src="/.github/images/banner.png" alt="Project Banner" width="600">
 
 [![harperlouart.com](https://img.shields.io/badge/demo-live-green.svg)](https://your-domain.com)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -51,9 +51,12 @@ Harper Lou Art is a full-stack portfolio website designed for an artist to showc
 - [x] Copy and paste email
 ![Email copy](/.github/images/email_copy.png)
 - [x] Mobile-optimized design
-![mobile1](/.github/images/mobile1.png)
-![mobile2](/.github/images/mobile2.png)
-![mobile3](/.github/images/mobile3.png)
+
+<div align="center">
+  <img src="/.github/images/mobile1.png" alt="Mobile View 1" width="250">
+  <img src="/.github/images/mobile2.png" alt="Mobile View 2" width="250">
+  <img src="/.github/images/mobile3.png" alt="Mobile View 3" width="250">
+</div>
 
 ### Artist Portal
 ![artwork upload](/.github/images/upload_artwork.png)
