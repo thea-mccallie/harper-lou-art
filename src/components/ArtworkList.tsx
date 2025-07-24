@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import EditArtworkModal from "./EditArtworkModal"
+import EditArtworkModal from "@/components/EditArtworkModal"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"

@@ -2,9 +2,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import UploadForm from "../components/UploadForm";
-import ArtworkList from "../components/ArtworkList";
-import BioEditor from "../components/BioEditor";
+import UploadForm from "../../components/UploadForm";
+import ArtworkList from "../../components/ArtworkList";
+import BioEditor from "../../components/BioEditor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
