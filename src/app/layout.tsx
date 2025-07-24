@@ -1,6 +1,5 @@
-// src/app/layout.tsx
-
 import "@/styles/globals.css"
+import { Providers } from "./providers"
 
 import type { Metadata } from "next"
 
@@ -17,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-white text-black">
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   )

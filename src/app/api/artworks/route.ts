@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getArtworks, createArtwork } from "@/lib/db"
 
-export async function GET(request: NextRequest) {
+// GET /api/artworks - Retrieve all artworks
+export async function GET() {
   try {
     const artworks = await getArtworks()
     return NextResponse.json(artworks, { status: 200 })
@@ -11,10 +12,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// POST /api/artworks - Create a new artwork
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
+    // Validate required fields
     if (!body.id || !body.title || !body.imageUrls || !Array.isArray(body.imageUrls)) {
       return NextResponse.json({ error: "Invalid artwork data" }, { status: 400 })
     }

@@ -1,253 +1,317 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Harper Lou Art Portfolio
 
-## Getting Started
+> A modern, responsive portfolio website for showcasing artwork with an integrated artist management portal.
 
-First, run the development server:
+<img src="/.github/images/banner.png" alt="Project Banner" width="600">
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+[![harperlouart.com](https://img.shields.io/badge/demo-live-green.svg)](https://your-domain.com)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-15.1.6-black.svg)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
+
+## 📖 Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [API Reference](#api-reference)
+- [Components](#components)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+
+## 🎨 Overview
+
+Harper Lou Art is a full-stack portfolio website designed for an artist to showcase their work with a professional, gallery-like presentation. The project features a public-facing portfolio with category filtering and a secure artist portal for content management.
+
+### Key Highlights
+- **Responsive Design**: Mobile-first approach with elegant grid layouts
+- **Artist Portal**: Secure content management system with Google OAuth
+- **Image Management**: S3 integration with drag-and-drop reordering
+- **Category Filtering**: Dynamic artwork filtering by medium
+- **Modern UI**: Built with Shadcn/UI components and Tailwind CSS
+
+## ✨ Features
+
+### Public Portfolio
+- [x] Responsive artwork gallery with grid layout
+![Artwork hover](/.github/images/homepage_interactive.png)
+- [x] Category-based filtering (Ceramics, Paintings, Prints)
+![Filter](/.github/images/filtered_homepage.png)
+- [x] Individual artwork detail pages with image carousel
+![Artwork page](/.github/images/artwork.png)
+- [x] Artist bio and about page
+![Bio](/.github/images/bio.png)
+- [x] Instagram integration
+- [x] Copy and paste email
+![Email copy](/.github/images/email_copy.png)
+- [x] Mobile-optimized design
+
+<div align="center">
+  <img src="/.github/images/mobile1.png" alt="Mobile View 1" width="250">
+  <img src="/.github/images/mobile2.png" alt="Mobile View 2" width="250">
+  <img src="/.github/images/mobile3.png" alt="Mobile View 3" width="250">
+</div>
+
+### Artist Portal
+![artwork upload](/.github/images/upload_artwork.png)
+- [x] Google OAuth authentication with email authorization
+- [x] Multi-image artwork upload with S3 integration
+- [x] Artworks and bio information stored with DynamoDB
+- [x] Drag-and-drop image reordering
+![Image reorder](/.github/images/image_reorder.png)
+- [x] Artwork management (edit/delete existing pieces)
+![Artwork List page](/.github/images/artwork_list.png)
+![Artwork editor](/.github/images/artwork_editor.png)
+- [x] Bio editor with profile image upload
+![Bio editor](/.github/images/bio_editor.png)
+- [x] Real-time preview and validation
+
+### Technical Features
+- [x] Server-side rendering with Next.js App Router
+- [x] TypeScript for type safety
+- [x] AWS S3 integration with presigned URLs
+- [x] Responsive design with Tailwind CSS
+- [x] Component documentation and testing ready
+- [x] DynamoDB for scalability and predictable performance
+
+
+## 🛠 Tech Stack
+
+### Frontend
+- **Framework**: [Next.js 15.1.6](https://nextjs.org/) with App Router
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [Shadcn/UI](https://ui.shadcn.com/)
+- **Icons**: [Lucide React](https://lucide.dev/) + [React Icons](https://react-icons.github.io/react-icons/)
+
+### Backend & Database
+- **Runtime**: [Node.js](https://nodejs.org/)
+- **API**: Next.js API Routes
+- **Database**: Amazon DynamoDB NoSQL database
+
+### Authentication & Storage
+- **Authentication**: [NextAuth.js](https://next-auth.js.org/) with Google OAuth
+- **File Storage**: [AWS S3](https://aws.amazon.com/s3/) with presigned URLs
+- **Image Processing**: Browser-native with preview generation
+
+### Development Tools
+- **Package Manager**: npm
+- **Linting**: ESLint with Next.js configuration
+- **Formatting**: [Can be added - Prettier not currently configured]
+- **Version Control**: Git with GitHub
+
+## 🏗 Architecture
+
+### System Overview
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Client Side   │    │   Server Side   │    │  External APIs  │
+│                 │    │                 │    │                 │
+│  Next.js App    │───▶│  API Routes     │───▶│  AWS S3         │
+│  React Components│    │  Authentication │    │  Google OAuth   │
+│  Tailwind CSS   │    │  Database Ops   │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Data Flow
+1. **Public Portfolio**: Static/SSR pages fetch artwork data via API routes
+2. **Authentication**: NextAuth.js handles Google OAuth with email validation
+3. **Image Upload**: Presigned S3 URLs enable direct browser-to-S3 uploads
+4. **Content Management**: Protected API routes handle CRUD operations
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📁 Project Structure
 
 ```
-harper-lou-art
-├─ .next
-│  ├─ app-build-manifest.json
-│  ├─ build
-│  │  └─ chunks
-│  │     ├─ [root of the server]__05f88b._.js
-│  │     ├─ [root of the server]__05f88b._.js.map
-│  │     ├─ [root of the server]__fd836e._.js
-│  │     ├─ [root of the server]__fd836e._.js.map
-│  │     ├─ [turbopack]_runtime.js
-│  │     ├─ [turbopack]_runtime.js.map
-│  │     ├─ postcss_config_mjs_transform_ts_89c7e7._.js
-│  │     └─ postcss_config_mjs_transform_ts_89c7e7._.js.map
-│  ├─ build-manifest.json
-│  ├─ cache
-│  │  └─ .rscinfo
-│  ├─ fallback-build-manifest.json
-│  ├─ package.json
-│  ├─ react-loadable-manifest.json
-│  ├─ server
-│  │  ├─ app
-│  │  │  ├─ api
-│  │  │  │  ├─ artworks
-│  │  │  │  │  ├─ route
-│  │  │  │  │  │  ├─ app-build-manifest.json
-│  │  │  │  │  │  ├─ app-paths-manifest.json
-│  │  │  │  │  │  ├─ build-manifest.json
-│  │  │  │  │  │  ├─ next-font-manifest.json
-│  │  │  │  │  │  ├─ react-loadable-manifest.json
-│  │  │  │  │  │  └─ server-reference-manifest.json
-│  │  │  │  │  ├─ route.js
-│  │  │  │  │  ├─ route.js.map
-│  │  │  │  │  └─ route_client-reference-manifest.js
-│  │  │  │  └─ bio
-│  │  │  │     ├─ route
-│  │  │  │     │  ├─ app-build-manifest.json
-│  │  │  │     │  ├─ app-paths-manifest.json
-│  │  │  │     │  ├─ build-manifest.json
-│  │  │  │     │  ├─ next-font-manifest.json
-│  │  │  │     │  ├─ react-loadable-manifest.json
-│  │  │  │     │  └─ server-reference-manifest.json
-│  │  │  │     ├─ route.js
-│  │  │  │     ├─ route.js.map
-│  │  │  │     └─ route_client-reference-manifest.js
-│  │  │  ├─ page
-│  │  │  │  ├─ app-build-manifest.json
-│  │  │  │  ├─ app-paths-manifest.json
-│  │  │  │  ├─ build-manifest.json
-│  │  │  │  ├─ next-font-manifest.json
-│  │  │  │  ├─ react-loadable-manifest.json
-│  │  │  │  └─ server-reference-manifest.json
-│  │  │  ├─ page.js
-│  │  │  ├─ page.js.map
-│  │  │  └─ page_client-reference-manifest.js
-│  │  ├─ app-paths-manifest.json
-│  │  ├─ chunks
-│  │  │  ├─ [root of the server]__033149._.js
-│  │  │  ├─ [root of the server]__033149._.js.map
-│  │  │  ├─ [root of the server]__4bfd22._.js
-│  │  │  ├─ [root of the server]__4bfd22._.js.map
-│  │  │  ├─ [root of the server]__56c25b._.js
-│  │  │  ├─ [root of the server]__56c25b._.js.map
-│  │  │  ├─ [root of the server]__6cfb87._.js
-│  │  │  ├─ [root of the server]__6cfb87._.js.map
-│  │  │  ├─ [root of the server]__b7f260._.js
-│  │  │  ├─ [root of the server]__b7f260._.js.map
-│  │  │  ├─ [turbopack]_runtime.js
-│  │  │  ├─ [turbopack]_runtime.js.map
-│  │  │  ├─ _6c16f2._.js
-│  │  │  ├─ _6c16f2._.js.map
-│  │  │  ├─ _a46e72._.js
-│  │  │  ├─ _a46e72._.js.map
-│  │  │  └─ ssr
-│  │  │     ├─ [root of the server]__2ce16d._.js
-│  │  │     ├─ [root of the server]__2ce16d._.js.map
-│  │  │     ├─ [root of the server]__550d4a._.js
-│  │  │     ├─ [root of the server]__550d4a._.js.map
-│  │  │     ├─ [turbopack]_runtime.js
-│  │  │     ├─ [turbopack]_runtime.js.map
-│  │  │     ├─ _459b27._.js
-│  │  │     ├─ _459b27._.js.map
-│  │  │     ├─ _4f9a2d._.js
-│  │  │     ├─ _4f9a2d._.js.map
-│  │  │     ├─ _e874e3._.js
-│  │  │     ├─ _e874e3._.js.map
-│  │  │     ├─ src_styles_58ed95._.css
-│  │  │     ├─ src_styles_58ed95._.css.map
-│  │  │     ├─ src_styles_artworkCard_b52d8e.css
-│  │  │     ├─ src_styles_artworkCard_b52d8e.css.map
-│  │  │     ├─ src_styles_artworkList_b52d8e.css
-│  │  │     ├─ src_styles_artworkList_b52d8e.css.map
-│  │  │     ├─ src_styles_artworkPage_b52d8e.css
-│  │  │     ├─ src_styles_artworkPage_b52d8e.css.map
-│  │  │     ├─ src_styles_bioEditor_b52d8e.css
-│  │  │     ├─ src_styles_bioEditor_b52d8e.css.map
-│  │  │     ├─ src_styles_bioFooter_b52d8e.css
-│  │  │     ├─ src_styles_bioFooter_b52d8e.css.map
-│  │  │     ├─ src_styles_editModal_b52d8e.css
-│  │  │     ├─ src_styles_editModal_b52d8e.css.map
-│  │  │     ├─ src_styles_globals_b52d8e.css
-│  │  │     ├─ src_styles_globals_b52d8e.css.map
-│  │  │     ├─ src_styles_homepage_b52d8e.css
-│  │  │     ├─ src_styles_homepage_b52d8e.css.map
-│  │  │     ├─ src_styles_portalpage_b52d8e.css
-│  │  │     ├─ src_styles_portalpage_b52d8e.css.map
-│  │  │     ├─ src_styles_uploadForm_b52d8e.css
-│  │  │     └─ src_styles_uploadForm_b52d8e.css.map
-│  │  ├─ interception-route-rewrite-manifest.js
-│  │  ├─ middleware-build-manifest.js
-│  │  ├─ middleware-manifest.json
-│  │  ├─ middleware-react-loadable-manifest.js
-│  │  ├─ next-font-manifest.js
-│  │  ├─ next-font-manifest.json
-│  │  ├─ pages-manifest.json
-│  │  ├─ server-reference-manifest.js
-│  │  └─ server-reference-manifest.json
-│  ├─ static
-│  │  ├─ chunks
-│  │  │  ├─ [turbopack]_browser_dev_hmr-client_d6d8d4._.js
-│  │  │  ├─ [turbopack]_browser_dev_hmr-client_d6d8d4._.js.map
-│  │  │  ├─ [turbopack]_browser_dev_hmr-client_hmr-client_ts_8e6352._.js
-│  │  │  ├─ [turbopack]_browser_dev_hmr-client_hmr-client_ts_d0a96d._.js
-│  │  │  ├─ [turbopack]_browser_dev_hmr-client_hmr-client_ts_d0a96d._.js.map
-│  │  │  ├─ _7cb389._.js
-│  │  │  ├─ _7cb389._.js.map
-│  │  │  ├─ _d95469._.js
-│  │  │  ├─ _d95469._.js.map
-│  │  │  ├─ _e69f0d._.js
-│  │  │  ├─ _fc5403._.js
-│  │  │  ├─ _fc5403._.js.map
-│  │  │  ├─ src_app_layout_tsx_61af54._.js
-│  │  │  ├─ src_app_page_tsx_f21d6e._.js
-│  │  │  ├─ src_styles_58ed95._.css
-│  │  │  ├─ src_styles_58ed95._.css.map
-│  │  │  ├─ src_styles_artworkCard_b52d8e.css
-│  │  │  ├─ src_styles_artworkCard_b52d8e.css.map
-│  │  │  ├─ src_styles_artworkList_b52d8e.css
-│  │  │  ├─ src_styles_artworkList_b52d8e.css.map
-│  │  │  ├─ src_styles_artworkPage_b52d8e.css
-│  │  │  ├─ src_styles_artworkPage_b52d8e.css.map
-│  │  │  ├─ src_styles_bioEditor_b52d8e.css
-│  │  │  ├─ src_styles_bioEditor_b52d8e.css.map
-│  │  │  ├─ src_styles_bioFooter_b52d8e.css
-│  │  │  ├─ src_styles_bioFooter_b52d8e.css.map
-│  │  │  ├─ src_styles_editModal_b52d8e.css
-│  │  │  ├─ src_styles_editModal_b52d8e.css.map
-│  │  │  ├─ src_styles_globals_b52d8e.css
-│  │  │  ├─ src_styles_globals_b52d8e.css.map
-│  │  │  ├─ src_styles_homepage_b52d8e.css
-│  │  │  ├─ src_styles_homepage_b52d8e.css.map
-│  │  │  ├─ src_styles_portalpage_b52d8e.css
-│  │  │  ├─ src_styles_portalpage_b52d8e.css.map
-│  │  │  ├─ src_styles_uploadForm_b52d8e.css
-│  │  │  └─ src_styles_uploadForm_b52d8e.css.map
-│  │  └─ development
-│  │     ├─ _buildManifest.js
-│  │     ├─ _clientMiddlewareManifest.json
-│  │     └─ _ssgManifest.js
-│  ├─ trace
-│  ├─ transform.js
-│  ├─ transform.js.map
-│  └─ types
-├─ README.md
-├─ next.config.ts
-├─ package-lock.json
-├─ package.json
-├─ postcss.config.mjs
-├─ public
-│  ├─ file.svg
-│  ├─ globe.svg
-│  ├─ next.svg
-│  ├─ vercel.svg
-│  └─ window.svg
-├─ src
-│  ├─ app
-│  │  ├─ api
-│  │  │  ├─ artworks
-│  │  │  │  ├─ [id]
-│  │  │  │  │  └─ route.ts
-│  │  │  │  └─ route.ts
-│  │  │  └─ bio
-│  │  │     └─ route.ts
-│  │  ├─ artwork
-│  │  │  └─ [id]
-│  │  │     └─ page.tsx
-│  │  ├─ bucket.ts
-│  │  ├─ components
-│  │  │  ├─ ArtworkCard.tsx
-│  │  │  ├─ ArtworkList.tsx
-│  │  │  ├─ BioEditor.tsx
-│  │  │  ├─ BioFooter.tsx
-│  │  │  ├─ EditArtworkModal.tsx
-│  │  │  └─ UploadForm.tsx
-│  │  ├─ db.ts
-│  │  ├─ layout.tsx
-│  │  ├─ middleware.ts
-│  │  ├─ model.ts
-│  │  ├─ page.tsx
-│  │  └─ portal
-│  │     └─ page.tsx
-│  └─ styles
-│     ├─ artworkCard.css
-│     ├─ artworkList.css
-│     ├─ artworkPage.css
-│     ├─ bioEditor.css
-│     ├─ bioFooter.css
-│     ├─ editModal.css
-│     ├─ globals.css
-│     ├─ homepage.css
-│     ├─ portalpage.css
-│     └─ uploadForm.css
-├─ tailwind.config.ts
-└─ tsconfig.json
-
+harper-lou-art/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── layout.tsx         # Root layout with providers
+│   │   ├── page.tsx           # Homepage with artwork grid
+│   │   ├── about/             # About page
+│   │   ├── artwork/[id]/      # Individual artwork pages
+│   │   ├── portal/            # Protected artist portal
+│   │   ├── api/               # API routes
+│   │   │   ├── artworks/      # Artwork CRUD operations
+│   │   │   ├── auth/          # NextAuth configuration
+│   │   │   ├── bio/           # Bio management
+│   │   │   └── upload-url/    # S3 presigned URL generation
+│   │   └── components/        # React components
+│   │       ├── ArtworkCard.tsx
+│   │       ├── ArtworkList.tsx
+│   │       ├── BioEditor.tsx
+│   │       ├── EditArtworkModal.tsx
+│   │       └── UploadForm.tsx
+│   ├── components/ui/         # Shadcn/UI components
+│   ├── lib/                   # Utility functions
+│   └── styles/               # CSS files
+├── public/                   # Static assets
+├── .github/                  # GitHub assets and documentation
+│   └── images/              # README images and screenshots
+└── [config files]           # Next.js, TypeScript, Tailwind configs
 ```
+
+## 🚀 Installation
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- AWS account with S3 bucket
+- Google OAuth credentials
+
+### Setup Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/thea-mccallie/harper-lou-art.git
+   cd harper-lou-art
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Environment setup**
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. **Configure environment variables** (see [Configuration](#configuration))
+
+5. **Run the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env.local` file with the following variables:
+
+```env
+# Database
+DATABASE_URL="your-database-connection-string"
+
+# NextAuth.js
+NEXTAUTH_URL="http://localhost:3000" - eventually [your-domain]
+NEXTAUTH_SECRET="your-nextauth-secret"
+
+# Google OAuth
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+# Artist Authorization (comma-separated emails)
+AUTHORIZED_EMAILS="artist@example.com,admin@example.com"
+
+# AWS S3
+AWS_ACCESS_KEY_ID="your-aws-access-key"
+AWS_SECRET_ACCESS_KEY="your-aws-secret-key"
+AWS_REGION="your-aws-region"
+AWS_BUCKET_NAME="your-s3-bucket-name"
+```
+
+### AWS S3 Setup
+1. Create an S3 bucket with public read access
+2. Configure CORS for your domain
+3. Set up IAM user with S3 permissions
+4. Add credentials to environment variables
+
+### Google OAuth Setup
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized redirect URIs
+
+## 📱 Usage
+
+### For Visitors
+- Browse artwork collections on the homepage
+- Filter by category (Ceramics, Paintings, Prints)
+- View individual artwork details
+- Read artist bio on the About page
+- Follow Instagram link for latest updates
+
+### For Artists (Portal Access)
+1. Navigate to `/portal`
+2. Sign in with authorized Google account
+3. Use the tabbed interface to:
+   - Upload new artwork with multiple images
+   - Edit existing artwork details and images
+   - Update bio and profile information
+
+## 📚 API Reference
+
+### Artworks
+- `GET /api/artworks` - Fetch all artworks
+- `POST /api/artworks` - Create new artwork (protected)
+- `GET /api/artworks/[id]` - Fetch specific artwork
+- `PUT /api/artworks/[id]` - Update artwork (protected)
+- `DELETE /api/artworks/[id]` - Delete artwork (protected)
+
+### Bio
+- `GET /api/bio` - Fetch artist bio
+- `PUT /api/bio` - Update bio (protected)
+
+### Upload
+- `POST /api/upload-url` - Generate S3 presigned URL (protected)
+
+### Authentication
+- `GET /api/auth/session` - Get current session
+- `POST /api/auth/signin` - Sign in with provider
+- `POST /api/auth/signout` - Sign out
+
+## 🧩 Components
+
+### Public Components
+- **ArtworkCard**: Individual artwork display with hover effects
+- **Homepage**: Main gallery with filtering functionality
+- **About Page**: Artist bio and profile information
+
+### Portal Components
+- **UploadForm**: Multi-image upload with drag-and-drop reordering
+- **ArtworkList**: Management interface for existing artworks
+- **EditArtworkModal**: Modal for editing artwork details and images
+- **BioEditor**: Profile and bio editing interface
+
+### UI Components (Shadcn/UI)
+- Cards, Buttons, Inputs, Modals
+- Tabs, Alerts, Badges
+- Custom styling with Tailwind CSS
+
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+1. Push your code to GitHub
+2. Connect repository to Vercel
+3. Configure environment variables
+4. Deploy automatically on push
+
+
+### Pre-deployment Checklist
+- [ ] Environment variables configured
+- [ ] AWS S3 bucket set up with proper permissions
+- [ ] Google OAuth configured for production domain
+- [ ] Database connected and migrated
+- [ ] Authorized emails list updated
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+**Built with 🩵🧡🩷 for art and artsits**
