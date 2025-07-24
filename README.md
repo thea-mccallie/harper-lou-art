@@ -2,7 +2,7 @@
 
 > A modern, responsive portfolio website for showcasing artwork with an integrated artist management portal.
 
-![Project Banner](./docs/images/banner.png)
+![Project Banner](/.github/images/banner.png)
 
 [![harperlouart.com](https://img.shields.io/badge/demo-live-green.svg)](https://your-domain.com)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -40,33 +40,33 @@ Harper Lou Art is a full-stack portfolio website designed for an artist to showc
 
 ### Public Portfolio
 - [x] Responsive artwork gallery with grid layout
-![Artwork hover](./docs/images/homepage_interactive.png)
+![Artwork hover](/.github/images/homepage_interactive.png)
 - [x] Category-based filtering (Ceramics, Paintings, Prints)
-![Filter](./docs/images/filtered_homepage.png)
+![Filter](/.github/images/filtered_homepage.png)
 - [x] Individual artwork detail pages with image carousel
-![Artwork page](./docs/images/artwork.png)
+![Artwork page](/.github/images/artwork.png)
 - [x] Artist bio and about page
-![Bio](./docs/images/bio.png)
+![Bio](/.github/images/bio.png)
 - [x] Instagram integration
 - [x] Copy and paste email
-![Email copy](./docs/images/email_copy.png)
+![Email copy](/.github/images/email_copy.png)
 - [x] Mobile-optimized design
-![mobile1](./docs/images/mobile1.png)
-![mobile2](./docs/images/mobile2.png)
-![mobile3](./docs/images/mobile3.png)
+![mobile1](/.github/images/mobile1.png)
+![mobile2](/.github/images/mobile2.png)
+![mobile3](/.github/images/mobile3.png)
 
 ### Artist Portal
-![artwork upload](./docs/images/upload_artwork.png)
+![artwork upload](/.github/images/upload_artwork.png)
 - [x] Google OAuth authentication with email authorization
 - [x] Multi-image artwork upload with S3 integration
 - [x] Artworks and bio information stored with DynamoDB
 - [x] Drag-and-drop image reordering
-![Image reorder](./docs/images/image_reorder.png)
+![Image reorder](/.github/images/image_reorder.png)
 - [x] Artwork management (edit/delete existing pieces)
-![Artwork List page](./docs/images/artwork_list.png)
-![Artwork editor](./docs/images/artwork_editor.png)
+![Artwork List page](/.github/images/artwork_list.png)
+![Artwork editor](/.github/images/artwork_editor.png)
 - [x] Bio editor with profile image upload
-![Bio editor](./docs/images/bio_editor.png)
+![Bio editor](/.github/images/bio_editor.png)
 - [x] Real-time preview and validation
 
 ### Technical Features
@@ -148,7 +148,8 @@ harper-lou-art/
 │   ├── lib/                   # Utility functions
 │   └── styles/               # CSS files
 ├── public/                   # Static assets
-├── docs/                     # Documentation and images
+├── .github/                  # GitHub assets and documentation
+│   └── images/              # README images and screenshots
 └── [config files]           # Next.js, TypeScript, Tailwind configs
 ```
 
