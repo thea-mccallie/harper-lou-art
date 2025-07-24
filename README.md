@@ -55,7 +55,7 @@ Harper Lou Art is a full-stack portfolio website designed for an artist to showc
 <div align="center">
   <img src="/.github/images/mobile1.png" alt="Mobile View 1" width="250">
   <img src="/.github/images/mobile2.png" alt="Mobile View 2" width="250">
-  <img src="/.github/images/mobile3.png" alt="Mobile View 3" width="250" height="400" style="object-fit: cover;">
+  <img src="/.github/images/mobile3.png" alt="Mobile View 3" width="250">
 </div>
 
 ### Artist Portal
