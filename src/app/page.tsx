@@ -53,7 +53,9 @@ const HomePage = () => {
   const categories = [
     { value: "ceramics", label: "Ceramics" },
     { value: "painting", label: "Paintings" },
-    { value: "prints", label: "Prints" }
+    { value: "prints", label: "Prints" },
+    { value: "multimedia", label: "Multimedia" },
+    { value: "miscellaneous", label: "Miscellaneous" }
   ]
 
   // Fetch all artworks from API on component mount
@@ -151,7 +153,7 @@ const HomePage = () => {
               className="text-5xl font-light text-gray-900 cursor-pointer hover:text-gray-700 transition-colors duration-300"
               onClick={handleTitleClick}
             >
-              Harper Lou Art
+              harper lou
             </h1>
             
             {/* Right Side Navigation Links */}

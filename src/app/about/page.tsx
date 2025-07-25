@@ -21,7 +21,7 @@ const AboutPage = () => {
 
   // Handle email copy to clipboard functionality
   const handleEmailCopy = async () => {
-    const email = "harper@example.com" // TODO: replace with real email
+    const email = "harperloumcc@gmail.com"
     try {
       await navigator.clipboard.writeText(email)
       setEmailCopied(true)
@@ -83,7 +83,7 @@ const AboutPage = () => {
         <div className="flex justify-between items-center">
           <Link href="/">
             <h1 className="text-2xl font-light text-gray-900 cursor-pointer hover:text-gray-700 transition-colors duration-300">
-              Harper Lou Art
+              harper lou
             </h1>
           </Link>
         </div>
@@ -183,7 +183,7 @@ const AboutPage = () => {
                       
                       {/* Email Tooltip */}
                       <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-sm px-3 py-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-10">
-                        {emailCopied ? "Copied!" : "harper@example.com • Click to copy"}
+                        {emailCopied ? "Copied!" : "harperloumcc@gmail.com • Click to copy"}
                         {/* Tooltip arrow */}
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
                       </div>
