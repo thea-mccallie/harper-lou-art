@@ -65,7 +65,7 @@ const ArtworkPage = () => {
           {/* Site Title */}
           <Link href="/">
             <h1 className="text-2xl font-light text-gray-900 cursor-pointer hover:text-gray-700 transition-colors duration-300">
-              Harper Lou Art
+              harper lou
             </h1>
           </Link>
           

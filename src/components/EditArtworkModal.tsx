@@ -333,6 +333,8 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
                   <SelectItem value="painting">Painting</SelectItem>
                   <SelectItem value="ceramics">Ceramics</SelectItem>
                   <SelectItem value="prints">Prints</SelectItem>
+                  <SelectItem value="multimedia">Multimedia</SelectItem>
+                  <SelectItem value="miscellaneous">Miscellaneous</SelectItem>
                 </SelectContent>
               </Select>
             </div>
