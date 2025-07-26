@@ -122,11 +122,11 @@ const ArtworkPage = () => {
               <CarouselContent>
                 {artwork.imageUrls.map((imageUrl, index) => (
                   <CarouselItem key={index}>
-                    <div className="aspect-square relative overflow-hidden rounded-lg bg-gray-100">
+                    <div className="aspect-square relative overflow-hidden rounded-lg bg-gray-50">
                       <img
                         src={imageUrl}
                         alt={`${artwork.title} - Image ${index + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain bg-transparent"
                       />
                     </div>
                   </CarouselItem>
