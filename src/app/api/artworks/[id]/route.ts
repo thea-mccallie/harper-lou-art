@@ -6,10 +6,10 @@ import { getArtwork, updateArtwork, deleteArtwork } from "@/lib/db"
 
 export async function GET(
   request: NextRequest, 
-  { params }: any
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params as { id: string }
+    const { id } = await params
     const artwork = await getArtwork(id)
     if (!artwork) {
       return NextResponse.json({ error: "Artwork not found" }, { status: 404 })
@@ -25,10 +25,10 @@ export async function GET(
 // PUT /api/artworks/[id] - Update an existing artwork
 export async function PUT(
   request: NextRequest, 
-  { params }: any
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params as { id: string }
+    const { id } = await params
     const updates = await request.json()
 
     // Validate that updates are provided
@@ -56,10 +56,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest, 
-  { params }: any
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params as { id: string }
+    const { id } = await params
     await deleteArtwork(id)
     return NextResponse.json({ message: "Artwork deleted successfully" })
   } catch (error) {

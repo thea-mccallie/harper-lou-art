@@ -109,7 +109,7 @@ const ArtworkPage = () => {
             {/* Artwork Description */}
             {artwork.description && (
               <div className="prose prose-gray max-w-none">
-                <p className="text-lg text-gray-700 leading-relaxed">
+                <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-wrap">
                   {artwork.description}
                 </p>
               </div>

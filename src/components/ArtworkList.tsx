@@ -225,7 +225,7 @@ const ArtworkList = () => {
                   {artwork.title}
                 </CardTitle>
                 {artwork.description && (
-                  <CardDescription className="line-clamp-2">
+                  <CardDescription className="line-clamp-2 whitespace-pre-wrap">
                     {artwork.description}
                   </CardDescription>
                 )}
