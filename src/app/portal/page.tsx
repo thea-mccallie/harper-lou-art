@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import UploadForm from "../../components/UploadForm";
 import ArtworkList from "../../components/ArtworkList";
+import ArtworkOrderManager from "../../components/ArtworkOrderManager";
 import BioEditor from "../../components/BioEditor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -114,9 +115,10 @@ const ArtistPortalPage = () => {
         {/* Main Portal Content - Tabbed Interface */}
         <Tabs defaultValue="upload" className="w-full max-w-4xl mx-auto">
           {/* Tab Navigation */}
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="upload">Upload Artwork</TabsTrigger>
             <TabsTrigger value="list">Artwork List</TabsTrigger>
+            <TabsTrigger value="order">Order Artworks</TabsTrigger>
             <TabsTrigger value="bio">Edit Bio</TabsTrigger>
           </TabsList>
           
@@ -128,6 +130,11 @@ const ArtistPortalPage = () => {
           {/* List Tab - Manage existing artworks */}
           <TabsContent value="list" className="mt-6">
             <ArtworkList />
+          </TabsContent>
+          
+          {/* Order Tab - Reorder artwork display */}
+          <TabsContent value="order" className="mt-6">
+            <ArtworkOrderManager />
           </TabsContent>
           
           {/* Bio Tab - Edit artist profile information */}

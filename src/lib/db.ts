@@ -76,7 +76,20 @@ export async function updateBio(bioUpdates: Partial<BioItem>): Promise<BioItem |
     })
     try {
       const response = await docClient.send(command)
-      return response.Items as ArtworkItem[]
+      const artworks = response.Items as ArtworkItem[]
+      // Sort by sortOrder if available, otherwise by dateCreated (newest first)
+      return artworks.sort((a, b) => {
+        if (a.sortOrder !== undefined && b.sortOrder !== undefined) {
+          return a.sortOrder - b.sortOrder
+        }
+        if (a.sortOrder !== undefined && b.sortOrder === undefined) {
+          return -1
+        }
+        if (a.sortOrder === undefined && b.sortOrder !== undefined) {
+          return 1
+        }
+        return new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+      })
     } catch (error) {
       console.error("Error fetching artworks:", error)
       return []
@@ -110,22 +123,53 @@ export async function updateBio(bioUpdates: Partial<BioItem>): Promise<BioItem |
   }
 
 export async function updateArtwork(id: string, updates: any) {
+    // Build dynamic update expression based on provided fields
+    const updateExpressions: string[] = []
+    const expressionAttributeNames: { [key: string]: string } = {}
+    const expressionAttributeValues: { [key: string]: any } = {}
+
+    // Only add fields that are actually provided in updates
+    if (updates.title !== undefined) {
+      updateExpressions.push('#title = :title')
+      expressionAttributeNames['#title'] = 'title'
+      expressionAttributeValues[':title'] = updates.title
+    }
+    
+    if (updates.description !== undefined) {
+      updateExpressions.push('#description = :description')
+      expressionAttributeNames['#description'] = 'description'
+      expressionAttributeValues[':description'] = updates.description
+    }
+    
+    if (updates.category !== undefined) {
+      updateExpressions.push('#category = :category')
+      expressionAttributeNames['#category'] = 'category'
+      expressionAttributeValues[':category'] = updates.category
+    }
+    
+    if (updates.imageUrls !== undefined) {
+      updateExpressions.push('#imageUrls = :imageUrls')
+      expressionAttributeNames['#imageUrls'] = 'imageUrls'
+      expressionAttributeValues[':imageUrls'] = updates.imageUrls
+    }
+    
+    if (updates.sortOrder !== undefined) {
+      updateExpressions.push('#sortOrder = :sortOrder')
+      expressionAttributeNames['#sortOrder'] = 'sortOrder'
+      expressionAttributeValues[':sortOrder'] = updates.sortOrder
+    }
+
+    // If no fields to update, return error
+    if (updateExpressions.length === 0) {
+      throw new Error("No valid fields provided for update")
+    }
+
     const command = new UpdateCommand({
       TableName: ARTWORKS_TABLE_NAME,
       Key: { id },
-      UpdateExpression: 'set #title = :title, #description = :description, #category = :category, #imageUrls = :imageUrls',
-      ExpressionAttributeNames: {
-        '#title': 'title',
-        '#description': 'description',
-        '#category': 'category',
-        '#imageUrls': 'imageUrls',
-      },
-      ExpressionAttributeValues: {
-        ':title': updates.title,
-        ':description': updates.description,
-        ':category': updates.category,
-        ':imageUrls': updates.imageUrls,
-      },
+      UpdateExpression: `set ${updateExpressions.join(', ')}`,
+      ExpressionAttributeNames: expressionAttributeNames,
+      ExpressionAttributeValues: expressionAttributeValues,
       ReturnValues: 'ALL_NEW',
     })
   
