@@ -31,7 +31,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
     // Wrapper Link - navigates to artwork detail page
     <Link href={`/artwork/${id}`}>
       <div
-        className="relative w-full max-w-s aspect-[1/.75] overflow-hidden"
+        className="relative w-full max-w-s aspect-square overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -39,7 +39,7 @@ const ArtworkCard: React.FC<ArtworkCardProps> = ({
         <img
           src={imageUrls[0]} // Uses first image as thumbnail
           alt={title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain bg-transparent"
         />
         
         {/* Hover Overlay - shows title when card is hovered */}
