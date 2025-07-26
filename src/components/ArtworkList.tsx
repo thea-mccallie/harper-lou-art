@@ -14,6 +14,7 @@ interface ArtworkItem {
   imageUrls: string[]  // Array of image URLs
   category: string     // Artwork category/type
   description: string  // Detailed description
+  showOnHomepage?: boolean  // Whether to show on homepage
 }
 
 /**
@@ -214,6 +215,16 @@ const ArtworkList = () => {
                       className="absolute top-2 right-2 opacity-90"
                     >
                       {artwork.category}
+                    </Badge>
+                  )}
+                  
+                  {/* Homepage Badge */}
+                  {artwork.showOnHomepage && (
+                    <Badge 
+                      variant="default" 
+                      className="absolute top-2 left-2 opacity-90 bg-green-600 hover:bg-green-700"
+                    >
+                      Homepage
                     </Badge>
                   )}
                 </div>

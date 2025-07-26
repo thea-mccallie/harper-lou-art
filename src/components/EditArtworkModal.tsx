@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent } from "@/components/ui/card"
 import { X, Upload, GripVertical } from "lucide-react"
 
@@ -40,6 +41,7 @@ interface EditArtworkModalProps {
     imageUrls: string[]
     category: string
     description: string
+    showOnHomepage?: boolean
   }
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void  // Form field change handler
   onSubmit: (updatedArtwork: any) => void   // Callback when form is submitted
@@ -337,6 +339,23 @@ const EditArtworkModal: React.FC<EditArtworkModalProps> = ({ isOpen, onClose, ed
                   <SelectItem value="miscellaneous">Miscellaneous</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Homepage Visibility Checkbox */}
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="showOnHomepage"
+                checked={editingArtwork.showOnHomepage || false}
+                onCheckedChange={(checked) => onChange({ 
+                  target: { name: 'showOnHomepage', value: checked } 
+                } as any)}
+              />
+              <Label 
+                htmlFor="showOnHomepage" 
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Show on Homepage
+              </Label>
             </div>
 
             {/* Images Management Section */}

@@ -15,6 +15,7 @@ interface Artwork {
   imageUrls: string[]  // Array of S3 image URLs (first is main image)
   description: string  // Artwork description/details
   category: string     // Category classification (ceramics, painting, prints)
+  showOnHomepage?: boolean  // Whether to show on homepage
 }
 
 /**
@@ -62,7 +63,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
-        const response = await fetch("/api/artworks")
+        const response = await fetch("/api/artworks/homepage")
         if (!response.ok) {
           throw new Error("Failed to fetch artworks")
         }
@@ -81,17 +82,29 @@ const HomePage = () => {
   }, [])
 
   // Filter artworks by selected category
-  // Runs whenever artworks data or selectedCategory changes
+  // Runs whenever selectedCategory changes
   useEffect(() => {
-    if (selectedCategory) {
-      const filtered = artworks.filter(artwork => 
-        artwork.category.toLowerCase() === selectedCategory.toLowerCase()
-      )
-      setFilteredArtworks(filtered)
-    } else {
-      setFilteredArtworks(artworks) // Show all artworks when no category selected
+    const fetchFilteredArtworks = async () => {
+      try {
+        let url = "/api/artworks/homepage"
+        if (selectedCategory) {
+          url += `?category=${selectedCategory}`
+        }
+        
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error("Failed to fetch filtered artworks")
+        }
+        const data = await response.json()
+        setFilteredArtworks(data)
+      } catch (error) {
+        console.error("Error fetching filtered artworks:", error)
+        setError("Failed to fetch filtered artworks")
+      }
     }
-  }, [artworks, selectedCategory])
+
+    fetchFilteredArtworks()
+  }, [selectedCategory])
 
   /**
    * Handle category filter button clicks

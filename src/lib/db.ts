@@ -159,6 +159,12 @@ export async function updateArtwork(id: string, updates: any) {
       expressionAttributeValues[':sortOrder'] = updates.sortOrder
     }
 
+    if (updates.showOnHomepage !== undefined) {
+      updateExpressions.push('#showOnHomepage = :showOnHomepage')
+      expressionAttributeNames['#showOnHomepage'] = 'showOnHomepage'
+      expressionAttributeValues[':showOnHomepage'] = updates.showOnHomepage
+    }
+
     // If no fields to update, return error
     if (updateExpressions.length === 0) {
       throw new Error("No valid fields provided for update")
