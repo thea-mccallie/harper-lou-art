@@ -12,4 +12,6 @@ export interface BioItem {
     category: string
     description: string
     dateCreated: string
+    sortOrder?: number  // Optional field for controlling display order on homepage
+    showOnHomepage?: boolean  // Optional field to control homepage visibility
   }

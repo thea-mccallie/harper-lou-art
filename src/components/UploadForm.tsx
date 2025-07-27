@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Upload, X, GripVertical, Save, Loader2, AlertCircle, CheckCircle, Image as ImageIcon } from "lucide-react"
 
 // Interface for image preview objects during upload process
@@ -40,6 +41,7 @@ const UploadForm = () => {
   const [title, setTitle] = useState("")                              // Artwork title (required)
   const [description, setDescription] = useState("")                  // Artwork description (optional)
   const [category, setCategory] = useState("")                        // Artwork category (paintings, prints, ceramics)
+  const [showOnHomepage, setShowOnHomepage] = useState(false)         // Whether to show on homepage (default: false)
   const [imagePreviews, setImagePreviews] = useState<ImagePreview[]>([])  // Array of selected images with preview URLs
   const [loading, setLoading] = useState(false)                       // Loading state during form submission
   const [error, setError] = useState("")                              // Error message display
@@ -193,6 +195,7 @@ const UploadForm = () => {
         category,
         imageUrls, // Store the array of image URLs in the correct order
         dateCreated: new Date().toISOString(),
+        showOnHomepage,
       }
 
       // Step 3: Save artwork metadata to the database
@@ -213,6 +216,7 @@ const UploadForm = () => {
       setTitle("")
       setDescription("")
       setCategory("")
+      setShowOnHomepage(false)
       
       // Clean up object URLs to prevent memory leaks
       imagePreviews.forEach(preview => {
@@ -297,6 +301,21 @@ const UploadForm = () => {
                     <SelectItem value="miscellaneous">Miscellaneous</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              
+              {/* Homepage Visibility Checkbox */}
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="showOnHomepage"
+                  checked={showOnHomepage}
+                  onCheckedChange={(checked) => setShowOnHomepage(checked === true)}
+                />
+                <Label 
+                  htmlFor="showOnHomepage" 
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Show on Homepage
+                </Label>
               </div>
               
               {/* Description Textarea */}
