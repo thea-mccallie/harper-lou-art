@@ -133,27 +133,50 @@ harper-lou-art/
 │   ├── app/                    # Next.js App Router
 │   │   ├── layout.tsx         # Root layout with providers
 │   │   ├── page.tsx           # Homepage with artwork grid
+│   │   ├── providers.tsx      # App providers (NextAuth, etc.)
 │   │   ├── about/             # About page
 │   │   ├── artwork/[id]/      # Individual artwork pages
 │   │   ├── portal/            # Protected artist portal
-│   │   ├── api/               # API routes
-│   │   │   ├── artworks/      # Artwork CRUD operations
-│   │   │   ├── auth/          # NextAuth configuration
-│   │   │   ├── bio/           # Bio management
-│   │   │   └── upload-url/    # S3 presigned URL generation
-│   │   └── components/        # React components
-│   │       ├── ArtworkCard.tsx
-│   │       ├── ArtworkList.tsx
-│   │       ├── BioEditor.tsx
-│   │       ├── EditArtworkModal.tsx
-│   │       └── UploadForm.tsx
-│   ├── components/ui/         # Shadcn/UI components
+│   │   └── api/               # API routes
+│   │       ├── artworks/      # Artwork CRUD operations
+│   │       ├── auth/          # NextAuth configuration
+│   │       ├── bio/           # Bio management
+│   │       └── upload-url/    # S3 presigned URL generation
+│   ├── components/            # React components
+│   │   ├── ArtworkCard.tsx
+│   │   ├── ArtworkList.tsx
+│   │   ├── BioEditor.tsx
+│   │   ├── EditArtworkModal.tsx
+│   │   ├── UploadForm.tsx
+│   │   └── ui/               # Shadcn/UI components
+│   │       ├── alert.tsx
+│   │       ├── badge.tsx
+│   │       ├── button.tsx
+│   │       ├── card.tsx
+│   │       ├── carousel.tsx
+│   │       ├── dialog.tsx
+│   │       ├── input.tsx
+│   │       ├── label.tsx
+│   │       ├── select.tsx
+│   │       ├── tabs.tsx
+│   │       └── textarea.tsx
 │   ├── lib/                   # Utility functions
+│   │   ├── bucket.ts         # AWS S3 configuration
+│   │   ├── db.ts             # DynamoDB operations
+│   │   ├── model.ts          # TypeScript interfaces
+│   │   └── utils.ts          # Utility functions
 │   └── styles/               # CSS files
+│       └── globals.css       # Global styles and Tailwind imports
 ├── public/                   # Static assets
 ├── .github/                  # GitHub assets and documentation
 │   └── images/              # README images and screenshots
 └── [config files]           # Next.js, TypeScript, Tailwind configs
+    ├── next.config.ts
+    ├── tailwind.config.js
+    ├── postcss.config.js
+    ├── tsconfig.json
+    ├── package.json
+    └── components.json       # Shadcn/UI configuration
 ```
 
 ## 🚀 Installation
