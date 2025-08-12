@@ -13,15 +13,12 @@ export async function GET(request: NextRequest) {
     let filteredArtworks = allArtworks
     
     if (category) {
-      // If category filter is applied, show:
-      // 1. Artworks with showOnHomepage=true AND matching category
-      // 2. Artworks without showOnHomepage field but matching category (backward compatibility)
+      // Route 1: Category filtering - show ALL artworks matching category (ignore showOnHomepage)
       filteredArtworks = allArtworks.filter(artwork => 
-        artwork.category.toLowerCase() === category.toLowerCase() &&
-        (artwork.showOnHomepage === true || artwork.showOnHomepage === undefined)
+        artwork.category.toLowerCase() === category.toLowerCase()
       )
     } else {
-      // No category filter - only show artworks marked for homepage
+      // Route 2: Main homepage - only show artworks explicitly marked for homepage
       filteredArtworks = allArtworks.filter(artwork => 
         artwork.showOnHomepage === true
       )
